@@ -1,41 +1,45 @@
 # ============================================================
-#  SlimeEasy 配置文件
+#  SlimeEasy Configuration
 # ============================================================
-# 说明:
-#  - 时间单位以各字段注释为准: 秒为墙钟时间, tick 为 Slimefun/Bukkit 调度单位。
-#  - enabled:        功能开关。false = 不注册该内容 (需重启生效)。
-#  - research-level: 研究解锁所需经验等级 (需重启生效)。
-#  - 其余数值:       运行时读取, /se reload 后立即生效。
+# Notes:
+#  - Time units are documented per setting: seconds use wall-clock time;
+#    ticks use Slimefun/Bukkit scheduler ticks.
+#  - enabled:        feature toggle. false = do not register the content
+#                    (server restart required).
+#  - research-level: experience level required to unlock the research
+#                    (server restart required).
+#  - Other values:   read at runtime and applied after /se reload.
 #
-#  重载: 游戏内执行 /se reload。
-#   · 运行时数值 (伤害/范围/冷却/间隔/产量/吞吐/上限) —— 立即生效。
-#   · 功能开关 / 研究等级 / 物品文本 (items 段) —— 需重启服务端。
+# Reload with /se reload in game.
+#  - Runtime values (damage/range/cooldowns/intervals/output/throughput/limits)
+#    apply immediately.
+#  - Feature toggles / research levels / registered item text require restart.
 #
-#  玩家可见文本位于 lang/<language>.yml，颜色码使用 &。
+# Player-visible text is stored in lang/<language>.yml. Color codes use &.
 # ============================================================
 
-# 语言文件名，对应 plugins/SlimeEasy/lang/<language>.yml。
-language: zh_CN
+# Language file name, corresponding to plugins/SlimeEasy/lang/<language>.yml.
+language: en_US
 
-# ---------- 机器通用 (破坏机 / 放置机的展示框调频) ----------
+# ---------- Shared machine settings (Breaker / Placer frequency controls) ----------
 machine:
   frequency:
-    # 展示框调频的默认间隔 (Slimefun tick 数)。
+    # Default interval used by the item-frame/lever frequency control (Slimefun ticks).
     default-interval: 1
-    # 拉杆每旋转一档改变的 tick 步进。
+    # Tick step added for each lever rotation position.
     step-per-angle: 3
 
-# ---------- 自动破坏机 ----------
+# ---------- Auto Breaker ----------
 auto-breaker:
   enabled: true
   research-level: 10
 
-# ---------- 自动放置机 ----------
+# ---------- Auto Placer ----------
 auto-placer:
   enabled: true
   research-level: 10
 
-# ---------- 筛子 ----------
+# ---------- Sieves ----------
 sieve:
   enabled: true
   research-level: 8
@@ -57,20 +61,23 @@ sieve:
       crushed-end-stone: 20
       crushed-blackstone: 16
 
-  # 强化筛子使用下方 chances 的完整基准收益；普通筛子降低常规概率与部分保底数量。
+  # Reinforced Sieves use the full base chances below. Basic Sieves reduce
+  # normal chances and some guaranteed reward amounts.
   rewards:
     basic:
       chance-multiplier: 0.5
       guaranteed-amount-multiplier: 0.5
-      # 竹子是普通筛子的专属进阶材料：可直接种植，也可用于制作强化结构所需的脚手架。
+      # Bamboo is a Basic Sieve progression reward and can be used to craft
+      # the scaffolding required by the Reinforced Sieve structure.
       chance-overrides:
         dirt:
           bamboo: 8
         grass-block:
           bamboo: 16
 
-  # 筛面原料使用 BlockDisplay 展示。长宽从 0.8 缩至 0.64，高度从 0.8 压至 0。
-  # Display 的底面中心固定在活板门筛面中心，动画由客户端插值完成，不使用逐 tick 实体移动。
+  # Sieve input is shown using BlockDisplay. Width/depth shrink from 0.8 to 0.64
+  # while height compresses from 0.8 to 0. The display remains centered on the
+  # trapdoor surface and uses client interpolation rather than per-tick movement.
   animation:
     enabled: true
     interpolation-ticks: 3
@@ -79,33 +86,33 @@ sieve:
     end-horizontal-scale: 0.64
     start-height-scale: 0.8
 
-  # 强化筛子的基准概率；普通筛子按 rewards.basic.chance-multiplier 衰减。
-  # 每个条目独立判定，取值范围 0-100；修改后执行 /se reload 即时生效。
+  # Base chances for the Reinforced Sieve. Basic Sieves apply the multiplier above.
+  # Each entry is rolled independently from 0-100. /se reload applies changes.
   chances:
     dirt:
-      # 小麦种子
+      # Wheat Seeds
       wheat-seeds: 7
-      # 矮草（草籽）
+      # Short Grass
       short-grass: 7
-      # 西瓜种子
+      # Melon Seeds
       melon-seeds: 3
-      # 南瓜种子
+      # Pumpkin Seeds
       pumpkin-seeds: 3
-      # 甘蔗
+      # Sugar Cane
       sugar-cane: 3
-      # 胡萝卜
+      # Carrot
       carrot: 2
-      # 马铃薯
+      # Potato
       potato: 2
-      # 橡树树苗（橡子）
+      # Oak Sapling
       oak-sapling: 2
-      # 金合欢树苗
+      # Acacia Sapling
       acacia-sapling: 1
-      # 云杉树苗
+      # Spruce Sapling
       spruce-sapling: 1
-      # 白桦树苗
+      # Birch Sapling
       birch-sapling: 1
-      # 竹子；普通筛子使用 rewards.basic.chance-overrides 中的更高概率。
+      # Bamboo; Basic Sieves use the higher chance override above.
       bamboo: 2
     grass-block:
       wheat-seeds: 14
@@ -121,333 +128,341 @@ sieve:
       birch-sapling: 2
       bamboo: 4
     gravel:
-      # 燧石
+      # Flint
       flint: 25
-      # 煤炭
+      # Coal
       coal: 13
-      # 青金石
+      # Lapis Lazuli
       lapis-lazuli: 5
-      # 钻石
+      # Diamond
       diamond: 1
-      # 绿宝石
+      # Emerald
       emerald: 1
-      # 铁原矿
+      # Raw Iron
       raw-iron: 20
-      # 金原矿
+      # Raw Gold
       raw-gold: 3
-      # 铜原矿
+      # Raw Copper
       raw-copper: 6
-      # Slimefun 锡粉
+      # Slimefun Tin Dust
       tin-dust: 6
-      # Slimefun 铝粉
+      # Slimefun Aluminum Dust
       aluminum-dust: 13
     dust:
-      # 骨粉
+      # Bone Meal
       bone-meal: 20
-      # 红石
+      # Redstone
       redstone: 13
-      # 火药
+      # Gunpowder
       gunpowder: 7
-      # 萤石粉
+      # Glowstone Dust
       glowstone-dust: 6
-      # 烈焰粉
+      # Blaze Powder
       blaze-powder: 5
-      # Slimefun 铁粉
+      # Slimefun Iron Dust
       iron-dust: 20
-      # Slimefun 金粉
+      # Slimefun Gold Dust
       gold-dust: 3
-      # Slimefun 铜粉
+      # Slimefun Copper Dust
       copper-dust: 6
-      # Slimefun 锡粉
+      # Slimefun Tin Dust
       tin-dust: 7
-      # Slimefun 铝粉
+      # Slimefun Aluminum Dust
       aluminum-dust: 13
     crushed-netherrack:
-      # 铁原矿
+      # Raw Iron
       raw-iron: 17
-      # 金原矿
+      # Raw Gold
       raw-gold: 17
-      # 铜原矿
+      # Raw Copper
       raw-copper: 10
     soul-sand:
-      # 地狱疣
+      # Nether Wart
       nether-wart: 5
-      # 恶魂之泪
+      # Ghast Tear
       ghast-tear: 2
-      # 额外的下界石英（保底 1 个不受此项影响）
+      # Extra Nether Quartz (the guaranteed 1 quartz is unaffected)
       extra-quartz: 33
     soul-soil:
-      # 地狱疣
+      # Nether Wart
       nether-wart: 5
-      # 恶魂之泪
+      # Ghast Tear
       ghast-tear: 2
-      # 额外的下界石英（保底 1 个不受此项影响）
+      # Extra Nether Quartz (the guaranteed 1 quartz is unaffected)
       extra-quartz: 33
     sand:
-      # 可可豆
+      # Cocoa Beans
       cocoa-beans: 3
-      # 仙人掌（仙人掌种子）
+      # Cactus
       cactus: 3
-      # 丛林树苗
+      # Jungle Sapling
       jungle-sapling: 2
-      # 棕色蘑菇（古代孢子）
+      # Brown Mushroom
       brown-mushroom: 1
-      # 铁原矿
+      # Raw Iron
       raw-iron: 20
-      # 金原矿
+      # Raw Gold
       raw-gold: 3
-      # 铜原矿
+      # Raw Copper
       raw-copper: 6
-      # Slimefun 锡粉
+      # Slimefun Tin Dust
       tin-dust: 6
-      # Slimefun 铝粉
+      # Slimefun Aluminum Dust
       aluminum-dust: 13
     crushed-end-stone:
-      # Slimefun 锡粉
+      # Slimefun Tin Dust
       tin-dust: 10
-      # 末影珍珠
+      # Ender Pearl
       ender-pearl: 5
-      # 紫颂果
+      # Chorus Fruit
       chorus-fruit: 8
-      # 爆裂紫颂果
+      # Popped Chorus Fruit
       popped-chorus-fruit: 4
-      # 潜影壳
+      # Shulker Shell
       shulker-shell: 1
     crushed-blackstone:
-      # 玄武岩
+      # Basalt
       basalt: 20
-      # 下界石英
+      # Nether Quartz
       quartz: 15
-      # 金粒
+      # Gold Nugget
       gold-nugget: 12
-      # 岩浆膏
+      # Magma Cream
       magma-cream: 5
-      # 萤石粉
+      # Glowstone Dust
       glowstone-dust: 6
-      # 烈焰粉
+      # Blaze Powder
       blaze-powder: 4
-      # 哭泣的黑曜石
+      # Crying Obsidian
       crying-obsidian: 2
-      # 远古残骸
+      # Ancient Debris
       ancient-debris: 1
 
-# ---------- 苦力怕驱逐方块 ----------
+# ---------- Creeper Ward ----------
 creeper-ward:
   enabled: true
   research-level: 10
-  # 保护半径 (区块): 1 = 以所在区块为中心的 3x3 区块。
+  # Protection radius in chunks: 1 = a 3x3 area centered on the ward's chunk.
   protect-radius-chunks: 1
-  # 主动推离苦力怕的检测半径 (格)。
+  # Radius in blocks used to find creepers that should be pushed away.
   detect-radius: 48.0
-  # 推离水平力度。
+  # Horizontal push strength.
   push-strength: 0.8
-  # 推离附加的向上分量。
+  # Additional upward push component.
   push-up: 0.2
-  # 单次 tick 最多推离的苦力怕数量。
+  # Maximum number of creepers pushed in one tick.
   max-push-attempts: 20
-  # 保护区缓存 TTL (秒)。
+  # Protected-chunk cache TTL in seconds.
   protection-ttl-seconds: 8
-  # 单次自然生成事件最多回溯扫描的区块数。
+  # Maximum chunks scanned backward from a natural spawn event.
   max-scan-chunks: 16
 
-# ---------- 屠夫机器 ----------
+# ---------- Butcher Machine ----------
 butcher:
   enabled: true
   research-level: 15
-  # 基础攻击截面边长 (格); 每级范围升级 +2。
+  # Base attack cross-section width/height in blocks; each Range level adds 2.
   base-span: 3
-  # 基础攻击纵深 (格); 每级范围升级 +1。
+  # Base attack depth in blocks; each Range level adds 1.
   base-depth: 1
-  # 每级伤害升级的线性加成 (基础值的比例)。
+  # Linear damage increase per Damage Upgrade level, as a fraction of base damage.
   damage-per-level: 0.5
-  # 每 1 点饱食度折算的攻击次数。
+  # Number of attacks granted by one nutrition point.
   attacks-per-nutrition: 15
-  # 内部余量缓存上限 (饱食度)。
+  # Maximum internal nutrition cache.
   max-satiety: 100
-  # 范围 / 伤害升级级数上限。
+  # Maximum Range / Damage Upgrade level.
   max-upgrade-level: 5
 
-# ---------- 自动点击器 ----------
+# ---------- Auto Clicker ----------
 auto-clicker:
   enabled: true
   research-level: 15
-  # 最小点击间隔 (tick); 0.05 = 每 tick 连点 20 次。
+  # Minimum click interval in ticks; 0.05 = up to 20 clicks per tick.
   min-interval: 0.05
-  # 最大点击间隔 (tick)。
+  # Maximum click interval in ticks.
   max-interval: 40.0
-  # 默认点击间隔 (tick)。
+  # Default click interval in ticks.
   default-interval: 4.0
-  # 微调步进 (Shift 点击, tick)。
+  # Fine adjustment step used by Shift-click, in ticks.
   fine-step: 0.05
-  # 粗调步进 (普通点击, tick)。
+  # Coarse adjustment step used by normal click, in ticks.
   coarse-step: 0.25
-  # 单个 Slimefun tick 内的最多点击次数 (防卡)。
+  # Maximum clicks in a single Slimefun tick to prevent runaway work.
   max-clicks-per-tick: 20
-  # 安装抽取升级后, 单个 tick 最多补入物品槽的数量。
+  # Maximum number of items refilled into the held-item slot per tick when
+  # an Extraction Upgrade is installed.
   extract-max-items-per-tick: 64
 
-# ---------- 采石场 (观察者方块; 附着圆石 + 岩浆 + 水 -> 产出配置材料) ----------
+# ---------- Quarry (observer + cobblestone touching lava and water) ----------
 quarry:
   enabled: true
   research-level: 12
-  # 无效率升级时, 每隔多少个 Slimefun tick 生产一次。
+  # Slimefun ticks between production cycles with no Efficiency Upgrade.
   base-interval-ticks: 2
-  # 无效率升级时每次生产数量。
+  # Items produced per base production cycle.
   base-output: 1
-  # 五档效率升级每个 Slimefun tick 的生产数量。
+  # Output per Slimefun tick for each Efficiency Upgrade tier.
   efficiency-output:
     tier-1: 1
     tier-2: 6
     tier-3: 12
     tier-4: 32
     tier-5: 64
-  # 周围容器放不下时是否把剩余产物掉落在采石场位置; false = 直接丢弃。
+  # If nearby containers cannot accept all output, drop leftovers at the
+  # Quarry location when true; discard them when false.
   drop-overflow: false
 
-# ---------- 矿物勘察尺 ----------
+# ---------- Ore Surveyor ----------
 survey-ruler:
   enabled: true
   research-level: 10
-  # 勘察冷却 (tick)。
+  # Survey cooldown in ticks.
   cooldown-ticks: 100
-  # 普通工业矿机采掘半径 (7x7 -> 3)。
+  # Industrial Miner radius (7x7 -> 3).
   miner-range: 3
-  # 进阶工业矿机采掘半径 (11x11 -> 5)。
+  # Advanced Industrial Miner radius (11x11 -> 5).
   advanced-miner-range: 5
-  # 燃料估算: 每单位燃料可驱动的挖掘方块数。
+  # Fuel estimates: mineable blocks per fuel unit.
   blocks-per-bucket: 96
   blocks-per-raw-fuel: 128
   blocks-per-fuel: 256
 
-# ---------- 工程师护目镜 ----------
+# ---------- Engineer Goggles ----------
 engineer-goggles:
   enabled: true
   research-level: 12
-  # 同世界三维直线扫描半径；扫描不会主动加载区块。
+  # 3D scan radius in the same world; scanning never force-loads chunks.
   radius: 16
-  # 穿戴检测、机器信息与全息图刷新周期 (tick)。
+  # Wear detection, machine information, and hologram refresh interval in ticks.
   refresh-ticks: 10
-  # 每轮最多首次扫描的 16×16×16 空间单元；调低可减轻尖峰，但新区域结构会更慢出现。
+  # Maximum new 16x16x16 cells scanned per refresh. Lower values reduce spikes
+  # but make newly entered areas appear more slowly.
   max-new-cells-per-refresh: 4
 
-# ---------- 生长抑制器 ----------
+# ---------- Growth Inhibitor ----------
 growth-inhibitor:
   enabled: true
   research-level: 10
 
-# ---------- 战斗挽具 ----------
+# ---------- Combat Harness ----------
 combat-harness:
   enabled: true
   research-level: 20
-  # 四档挽具每次激光的魔法伤害 (点)。
+  # Magic damage dealt by each harness tier's Guardian beam.
   damage:
     tier-1: 5.0
     tier-2: 10.0
     tier-3: 20.0
     tier-4: 25.0
-  # 交战半径 (格)。
+  # Engagement radius in blocks.
   range: 16.0
-  # 两次开火最小间隔 (毫秒)。
+  # Minimum time between attacks in milliseconds.
   cooldown-millis: 1500
-  # 扫描周期 (tick)。
+  # Target scan interval in ticks.
   period-ticks: 15
 
-# ---------- 存储系统 ----------
+# ---------- Storage System ----------
 storage:
-  # 海量抽屉
+  # Mass Storage Drawer
   drawer:
     enabled: true
     research-level: 8
-    # 磁吸半径 (格)。
+    # Magnet radius in blocks.
     magnet-radius: 6.0
-    # 存储的物品种类槽位数。
+    # Number of internal item-type slots.
     slots: 32
-  # 翻页存储箱
+  # Paged Storage Box
   box:
     enabled: true
     research-level: 15
-    # 每页物品种类数。
+    # Number of item types displayed per page.
     page-types: 45
-    # 磁吸半径 (格)。
+    # Magnet radius in blocks.
     magnet-radius: 6.0
-  # 磁盘管理器与物品存储磁盘
+  # Disk Manager and Item Storage Disks
   disk:
     enabled: true
     research-level: 25
-  # 存储升级组件
+  # Storage Upgrade Components
   upgrade:
     enabled: true
     research-level: 20
-    # 升级槽位上限。
+    # Maximum upgrade slots.
     max-slots: 14
-    # 翻页升级的最大页数。
+    # Maximum page count after Page Expansion upgrades.
     max-pages: 5
-    # 抽取 / 输出过滤名单最大物品种类数 (界面上限 27)。
+    # Maximum item types in extraction/output filters (GUI maximum 27).
     filter-max-items: 27
-    # 新过滤器是否默认使用白名单模式; false = 默认黑名单。
+    # Whether newly created filters default to whitelist mode.
+    # false = blacklist by default.
     filter-default-whitelist: false
-  # 抽取 / 输出升级及每个主动网络端口的单 tick 搬运吞吐。0 = 不限制。
+  # Per-tick transfer limits for Extraction / Output upgrades and each active
+  # network port. 0 = unlimited.
   io:
     pull-max-items-per-tick: 0
     push-max-items-per-tick: 0
-  # 存储网络
+  # Storage Network
   network:
     enabled: true
     research-level: 30
-    # 网络扫描半径 (格)。
+    # Network scan radius in blocks.
     scan-radius: 24
-    # 单个远程终端最多绑定的控制器数量。0 = 不限制。
+    # Maximum controllers bound to one Remote Terminal. 0 = unlimited.
     remote-terminal-max-bindings: 0
 
-# ---------- 简易村民 ----------
+# ---------- Simple Villagers ----------
 villager:
-  # 村民捕捉器
+  # Villager Catcher
   catcher:
     enabled: true
     research-level: 12
-  # 僵尸信号
+  # Zombie Signal
   zombie-signal:
     enabled: true
     research-level: 8
-  # 村民交易器
+  # Villager Trader
   trader:
     enabled: true
     research-level: 18
-    # 补货间隔 (秒): 村民职业与工作站方块匹配时, 每隔该秒数重置交易次数。
+    # Restock interval in seconds when the villager's profession matches
+    # the installed workstation block.
     restock-interval-seconds: 30
-  # 胶囊刷铁机
+  # Capsule Iron Farm
   iron-farm:
     enabled: true
     research-level: 20
-    # 产铁间隔 (秒): 村民 + 僵尸信号 + 食物齐全时的产出周期。
+    # Iron production interval in seconds when Villager + Zombie Signal + Food
+    # are all present.
     produce-interval-seconds: 20
-    # 每次产铁消耗的食物饱食度。
+    # Nutrition consumed per production cycle.
     food-per-cycle: 1
-    # 每次产出的铁锭数量。
+    # Iron ingots produced per cycle.
     iron-per-cycle: 1
-    # 速度升级级数上限。
+    # Maximum Speed Upgrade level.
     speed-upgrade-max-level: 5
-    # 速度升级每级缩短系数: 实际间隔 = 产铁间隔 / (1 + 级数 x 步长)。
+    # Speed scaling: actual interval = base interval / (1 + level x step).
     speed-upgrade-step: 0.5
-  # 村民小学
+  # Villager School
   school:
     enabled: true
     research-level: 15
-    # 傻子村民转化为无职业普通村民所需秒数。
+    # Seconds required to convert a Nitwit into an unemployed villager.
     convert-seconds: 30
-  # 遗忘药剂
+  # Potion of Forgetting
   forgetting-potion:
     enabled: true
     research-level: 12
-  # 村民治愈机
+  # Villager Healer
   healer:
     enabled: true
     research-level: 15
-    # 僵尸村民治愈为普通村民所需秒数 (每次消耗一个普通金苹果)。
+    # Seconds required to cure a Zombie Villager; consumes one regular Golden Apple.
     convert-seconds: 30
 
-# ---------- 简易的领地 ----------
+# ---------- Simple Territory ----------
 territory:
-  # 功能开关与研究等级在 Slimefun 注册阶段冻结，修改后需重启。
+  # Feature toggle and research level are frozen during Slimefun registration.
+  # Restart the server after changing either value.
   enabled: true
   research-level: 8
