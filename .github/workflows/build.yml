@@ -1,12 +1,12 @@
 name: Build
 
 # Build the plugin on every push and manual dispatch.
-# Successful pushes to main also publish the rolling `latest` prerelease.
+# Successful main builds publish the rolling `latest` prerelease and, for
+# non-SNAPSHOT versions, a stable versioned release if one does not exist.
 on:
   push:
   workflow_dispatch:
 
-# Release publishing requires repository content write permission.
 permissions:
   contents: write
 
@@ -33,30 +33,32 @@ jobs:
       - name: Build plugin JAR
         run: ./gradlew build --no-daemon --stacktrace
 
-      - name: Locate primary plugin JAR
+      - name: Prepare raw release JAR
         id: plugin_jar
         shell: bash
         run: |
           set -euo pipefail
           PLUGIN_VERSION="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
-          PLUGIN_JAR="build/libs/SlimeEasy-${PLUGIN_VERSION}.jar"
-          # Publish only the unclassified primary artifact so future sources/dev
-          # JARs cannot accidentally be treated as installable server plugins.
-          test -n "${PLUGIN_VERSION}"
-          test -f "${PLUGIN_JAR}"
-          echo "path=${PLUGIN_JAR}" >> "${GITHUB_OUTPUT}"
+          BUILT_JAR="build/libs/SlimeEasy-${PLUGIN_VERSION}.jar"
+          RELEASE_NAME="SF_SlimeEasy${PLUGIN_VERSION}.jar"
+          RELEASE_JAR="build/libs/${RELEASE_NAME}"
 
-      - name: Upload plugin artifact
+          test -n "${PLUGIN_VERSION}"
+          test -f "${BUILT_JAR}"
+          cp "${BUILT_JAR}" "${RELEASE_JAR}"
+
+          echo "version=${PLUGIN_VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "name=${RELEASE_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "path=${RELEASE_JAR}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload raw plugin artifact
         uses: actions/upload-artifact@v4
         with:
-          # Include the short commit identity in the artifact name for easy comparison.
-          name: SlimeEasy-${{ github.sha }}
-          # Kotlin is provided at runtime through Paper's plugin loader.
+          name: SF_SlimeEasy${{ steps.plugin_jar.outputs.version }}
           path: ${{ steps.plugin_jar.outputs.path }}
           if-no-files-found: error
           retention-days: 90
 
-      # Only successful main-branch builds update the rolling release.
       - name: Publish rolling latest release
         if: github.ref == 'refs/heads/main'
         env:
@@ -64,10 +66,37 @@ jobs:
         run: |
           set -euo pipefail
           SHA_SHORT="${GITHUB_SHA::7}"
-          # Recreate the latest release/tag at the current main commit.
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
           gh release create latest "${{ steps.plugin_jar.outputs.path }}" \
-            --title "Development Build (latest)" \
-            --notes "Automatically built from commit \`${SHA_SHORT}\`. This prerelease follows the latest successful main-branch build." \
+            --title "SlimeEasy Legacy ${{ steps.plugin_jar.outputs.version }} (latest)" \
+            --notes "Automatically built from commit \`${SHA_SHORT}\`. Raw installable JAR: \`${{ steps.plugin_jar.outputs.name }}\`." \
             --prerelease \
             --target "${GITHUB_SHA}"
+
+      - name: Publish stable version release
+        if: github.ref == 'refs/heads/main' && !contains(steps.plugin_jar.outputs.version, 'SNAPSHOT')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.plugin_jar.outputs.version }}"
+          TAG="v${VERSION}"
+          NOTES_FILE="release-notes/${VERSION}.md"
+
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; leaving it unchanged."
+            exit 0
+          fi
+
+          if [[ -f "${NOTES_FILE}" ]]; then
+            gh release create "${TAG}" "${{ steps.plugin_jar.outputs.path }}" \
+              --title "SlimeEasy Legacy ${VERSION}" \
+              --notes-file "${NOTES_FILE}" \
+              --target "${GITHUB_SHA}"
+          else
+            gh release create "${TAG}" "${{ steps.plugin_jar.outputs.path }}" \
+              --title "SlimeEasy Legacy ${VERSION}" \
+              --notes "SlimeEasy Legacy ${VERSION}. Raw installable JAR: \`${{ steps.plugin_jar.outputs.name }}\`." \
+              --target "${GITHUB_SHA}"
+          fi
