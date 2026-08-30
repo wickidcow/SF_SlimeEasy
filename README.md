@@ -1,435 +1,489 @@
 # SlimeEasy
 
-一个基于 [Slimefun](https://github.com/Slimefun/Slimefun4) 的 Paper 附属插件, 提供若干实用的自动化机械与防护装置。
+SlimeEasy is a feature-rich [Slimefun](https://github.com/Slimefun/Slimefun4) addon for modern Paper servers. It adds practical automation, storage, diagnostics, villager utilities, and a lightweight territory/claim system while integrating with Slimefun protections and machine behavior.
 
-## 环境要求
+This fork uses **English (`en_US`) as the default language**. The original Simplified Chinese locale is retained as an optional language.
 
-| 项 | 版本 |
-|------|------|
-| 服务端 | Paper 26.2+ |
+## Requirements
+
+| Component | Requirement |
+|---|---|
+| Server | Paper 26.2+ |
 | Java | 25 |
-| 前置插件 | Slimefun4 |
-| 可选插件 | DecentHolograms 2.10.1（工程师护目镜显示） |
+| Required plugin | Slimefun |
+| Optional plugin | DecentHolograms 2.10.1 for Engineer Goggles holograms |
 
-插件以 Paper 的 Mojang 映射 NMS/CraftBukkit 接口编译，不兼容 Spigot；升级服务端大版本时应使用对应 dev bundle 重新编译并核对内部签名。发布包不内嵌 Kotlin，首次启动由 Paper Loader 从默认 Maven 镜像下载对应 Kotlin 标准库，之后使用服务端缓存。
+SlimeEasy is compiled against Paper's Mojang-mapped NMS/CraftBukkit interfaces and is **not intended for Spigot**. Major Paper updates may require recompilation against the corresponding Paper dev bundle.
 
-## 下载
+The release JAR does not bundle Kotlin. Paper's plugin loader resolves the Kotlin runtime on first startup and then uses its normal dependency cache.
 
-最新开发版随 `main` 分支自动构建发布 (滚动更新, 地址固定不变):
+## Download
 
+The `main` branch automatically publishes a rolling development release after a successful build:
+
+```text
+https://github.com/wickidcow/SF_SlimeEasy/releases/download/latest/SlimeEasy-1.0-SNAPSHOT.jar
 ```
-https://github.com/FxRayHughes/SlimeEasy/releases/download/latest/SlimeEasy-1.0-SNAPSHOT.jar
-```
 
-将 jar 放入服务器 `plugins/` 目录, 与 Slimefun 一同加载即可。
+Place the JAR in `plugins/` and start the server with Slimefun installed.
 
-## 内容一览
+## Main Features
 
-全部内容分入五个 Slimefun 分类: **实用机械**、**实用工具**、**存储系统**、**简易村民**与**简易的领地**。功能开关、研究等级与主要运行参数由 `config.yml` 管理，玩家可见文本由 `lang/<language>.yml` 管理; 下文数值未特别说明时均为默认值。
+SlimeEasy content is organized into five Slimefun categories:
 
-### 筛子
+- **Utility Machines**
+- **Utility Tools**
+- **Storage System**
+- **Simple Villagers**
+- **Simple Territory**
 
-普通筛子与强化筛子分别注册为独立的 Slimefun 多方块指南项。普通结构为 **朝上的发射器上放置木质活板门**，强化结构为 **朝上的发射器上放置脚手架，脚手架上放置木质活板门**；两者都通过右键最上方的活板门操作。强化结构筛得更快，默认约为普通结构的 `1.5` 倍；所有配方的整体耗时也可以通过 `sieve.processing.action-multiplier` 统一调整。右键一个筛子会联动同一 y 层、四方向贴合、同层级结构的筛子，默认最多推进 `100` 个；已有流程会直接推进，空闲筛子会优先按手持可筛材料数量依次开工，手持材料不够覆盖的剩余筛子再尝试使用各自发射器中的输入。
+Feature toggles, research levels, and runtime tuning live in `config.yml`. Player-visible text lives in `lang/<language>.yml`.
 
-每份输入需要完成一段筛分过程后才结算；同一台筛子的推进间隔、各配方耗时均可在 `sieve.processing` 下调整。筛子开始加工时立即消耗一份输入并保存在内存流程中，手持可筛物品右键会直接开始本次加工，不会先塞进发射器。机器破坏、结构失效、区块卸载、世界卸载或插件关闭时，进行中的输入会优先返还到发射器，放不下或找不到发射器时掉落在原地。
+### Basic and Reinforced Sieves
 
-筛面使用 `BlockDisplay` 展示原料从 `0.8 × 0.8 × 0.8` 逐渐缩小、压扁至 `0.64 × 0 × 0.64` 的过程，底面中心固定在活板门筛面中心；关键帧由客户端插值，并配有对应方块的破碎粒子与敲击/破坏音效。强化结构会在脚手架顶面下方额外生成一层碎屑粒子。动画参数位于 `sieve.animation`。
+Two Slimefun multiblock sieves provide Ex Nihilo-style resource processing.
 
-尘土、粉碎地狱岩和粉碎末地石分别由沙子、地狱岩和末地石在磨石中制得；粉碎黑石则由**磨制黑石**在磨石中制得，避免与 Slimefun 内置的“普通黑石 → 沙砾”配方冲突。每个概率条目都是一次**独立事件**，不会先相加后抽取，因此一次筛选可能同时获得多个产物，也可能只得到保底产物或没有产物。表内概率是强化筛子的 `sieve.chances` 基准值；普通筛子默认以 `sieve.rewards.basic.chance-multiplier = 0.5` 结算共享概率，并以 `guaranteed-amount-multiplier = 0.5` 缩减保底数量后向上取整。
+**Basic Sieve**
 
-普通筛子可从泥土和草方块中分别以默认 `8%`、`16%` 的独立概率筛出竹子，高于强化筛子的 `2%`、`4%` 基准；竹子可直接种植，也可按原版配方制作强化结构所需的脚手架。普通概率位于 `sieve.rewards.basic.chance-overrides`，不再叠加普通概率倍率。
+- Upward-facing dispenser
+- Wooden trapdoor on top
+- Right-click the trapdoor to process
 
-| 输入 | 默认操作次数 | 强化筛子基准独立概率 | 强化保底产物 |
-|---|---:|---|---|
-| 泥土 | 4 | 小麦种子 7%、矮草 7%、西瓜种子 3%、南瓜种子 3%、甘蔗 3%、胡萝卜 2%、马铃薯 2%、橡树苗 2%、金合欢树苗 1%、云杉树苗 1%、白桦树苗 1%、竹子 2% | 石块 ×2 |
-| 草方块 | 6 | 小麦种子 14%、矮草 14%、西瓜种子 6%、南瓜种子 6%、甘蔗 6%、胡萝卜 4%、马铃薯 4%、橡树苗 4%、金合欢树苗 2%、云杉树苗 2%、白桦树苗 2%、竹子 4% | 石块 ×2 |
-| 沙砾 | 8 | 燧石 25%、煤炭 13%、青金石 5%、钻石 1%、绿宝石 1%、铁原矿 20%、金原矿 3%、铜原矿 6%、锡粉 6%、铝粉 13% | — |
-| 尘土 | 8 | 骨粉 20%、红石 13%、火药 7%、萤石粉 6%、烈焰粉 5%、铁粉 20%、金粉 3%、铜粉 6%、锡粉 7%、铝粉 13% | — |
-| 粉碎地狱岩 | 12 | 铁原矿 17%、金原矿 17%、铜原矿 10% | — |
-| 灵魂沙 | 7 | 地狱疣 5%、恶魂之泪 2%、额外下界石英 33% | 下界石英 ×1 |
-| 灵魂土 | 11 | 地狱疣 5%、恶魂之泪 2%、额外下界石英 33% | 下界石英 ×1 |
-| 沙子 | 6 | 可可豆 3%、仙人掌 3%、丛林树苗 2%、棕色蘑菇 1%、铁原矿 20%、金原矿 3%、铜原矿 6%、锡粉 6%、铝粉 13% | — |
-| 粉碎末地石 | 20 | 锡粉 10%、末影珍珠 5%、紫颂果 8%、爆裂紫颂果 4%、潜影壳 1% | — |
-| 粉碎黑石 | 16 | 玄武岩 20%、下界石英 15%、金粒 12%、岩浆膏 5%、萤石粉 6%、烈焰粉 4%、哭泣的黑曜石 2%、远古残骸 1% | — |
+**Reinforced Sieve**
 
-原配方中的铁、金、铜矿物按阶段替换为原版原矿簇或 Slimefun 矿粉，锡和铝统一使用 Slimefun 矿粉。普通筛子与四种磨石原料研究默认消耗 **8 级经验**，强化筛子独立研究默认消耗 **16 级经验**；研究系统本身不表达前置依赖，普通筛子产出竹子、竹子制作脚手架的物料链提供了递进获取路径。
+- Upward-facing dispenser
+- Scaffolding on top
+- Wooden trapdoor above the scaffolding
+- Processes faster and uses the full configured reward chances
 
-### 自动破坏机
+Nearby matching sieves on the same Y level can be advanced together. Processing speed, linked-machine limits, animation behavior, action counts, reward multipliers, and individual drop chances are configurable.
 
-以**普通活塞**驱动, 自动破坏活塞推杆朝向的方块并收入机器箱子。
+Sieve materials include:
 
-- 工具挖掘: 箱子第 0 格放挖掘类工具时, 以该工具挖掘, 生效时运 / 精准采集等附魔
-- 耐久消耗: 遵循原版**耐久 (Unbreaking)** 附魔的免损概率, 工具耗尽后清空该格并回退徒手挖掘
-- 容量保护: 掉落物无法完全放入箱子时, 本次不破坏, 避免物品溢出丢失
-- 领地保护: 以**放置者**身份校验目标方块, 尊重 WorldGuard / GriefPrevention 等保护插件 (无权限则跳过)
+- Dust
+- Crushed Netherrack
+- Crushed End Stone
+- Crushed Blackstone
 
-**合成** (增强工作台): 涂蜡铜箱子居中, 四周环绕普通活塞, 底部红石块 + 铁块。
+The sieve animation uses `BlockDisplay` interpolation and particles rather than moving entities every tick.
 
-### 自动放置机
+### Auto Breaker
 
-以**粘性活塞**驱动, 自动将机器箱子中的方块放置到活塞推杆朝向的位置。
+A piston-driven block breaker that stores drops in its machine inventory.
 
-- 领地保护: 同破坏机, 以**放置者**身份校验目标位置, 尊重 WorldGuard / GriefPrevention 等保护插件 (无权限则跳过)
+Features include:
 
-**合成** (增强工作台): 涂蜡铜箱子居中, 四周环绕粘性活塞, 底部红石块 + 铁块。
+- Tool-aware mining
+- Fortune and Silk Touch support
+- Vanilla Unbreaking behavior
+- Automatic fallback when a tool breaks
+- Inventory-capacity protection before breaking blocks
+- Protection checks using the real machine owner
+- WorldGuard / GriefPrevention-compatible protection flow through Bukkit/Slimefun checks
 
-### 苦力怕驱逐方块
+An item frame with a lever can be used to adjust machine frequency.
 
-绿色地毯外观。默认放置后, **其所在区块及周围一圈 (共 3×3 区块)** 成为受保护区; 保护半径、检测半径、推力与扫描上限均可配置:
+### Auto Placer
 
-- **禁止自然生成**: 保护区内不再自然生成苦力怕 (拦截自然 / 刷怪笼 / 区块生成等, 放行指令与刷怪蛋)
-- **持续驱逐**: 已进入的苦力怕沿"离开全部相连保护区的最近方向"被推出; 多个方块保护区重叠时方向一致, 不会把苦力怕挤在重叠带
-- **禁止爆炸**: 保护区内苦力怕无法引爆 (双层拦截: 引爆预备 + 实际爆炸)
-- **卡死兜底**: 苦力怕被连续推离约 10 秒仍无法离开 (被墙 / 坑卡住等) 时直接移除
+A sticky-piston-driven block placer that takes blocks from the machine inventory and places them in front of the piston.
 
-保护随方块存在而持续, 破坏后失效; 登记为内存 TTL 自愈式, 服务器重启后自动重建。
+The placer uses the real machine owner for protection checks and supports the same adjustable frequency system as the Auto Breaker.
 
-**合成** (增强工作台): 铁剑居中, 八格仙人掌环绕。
+### Creeper Ward
 
-### 屠夫机器
+A configurable creeper-protection block.
 
-观察者外观, 脸朝向即攻击方向。随 Slimefun tick 自动对**脸朝向前方默认 3×3 区域** (随范围升级增大) 内的非玩家生物发动范围横扫。基础范围、纵深、伤害倍率、食物折算和升级上限均可配置。右键打开界面:
+By default, one ward protects a 3x3 chunk area centered on its chunk:
 
-- **武器** (至多 7 把, 第一把优先, 耐久耗尽自动切下一把)、**附魔书** (抢夺 / 锋利 / 火焰附加生效)、**食物** (折算为攻击次数)、**范围 / 伤害升级** (数量即级数, 最多 5)
-- 所有物品可用**物流网络**或**漏斗** (任意面对准) 自动输入
-- 以**假玩家**为伤害来源: 正常掉落经验 / 稀有掉落 / 按抢夺缩放, 并补发 Slimefun 自定义掉落 (如铁傀儡的电路板); 假玩家已被授予全部 Slimefun 研究, 击杀掉落不受"未解锁"限制
-- 始终按真实机器放置者检查目标领地；领地主人及拥有实体攻击权限的成员可正常运行，在无权限领地内失效，OP 放置者直接放行
+- Prevents natural creeper spawning in the protected region
+- Continuously pushes existing creepers toward the nearest exit
+- Prevents creeper explosions inside the protected area
+- Removes creepers that remain trapped after repeated push attempts
+- Rebuilds protection automatically after restart
 
-研究解锁: **15 级经验**。**合成** (增强工作台): 观察者居中, 铁剑镇顶, 铁块 + 下界之星 + 红石块供能。
+Protection radius, detection radius, push force, scan limits, and cache behavior are configurable.
 
-### 自动点击器
+### Butcher Machine
 
-观察者外观, 脸朝向即点击方向。**需红石激活**, 通电后以假玩家身份对正前方方块模拟点击。
+An observer-based mob-processing machine that attacks non-player mobs in the area in front of it.
 
-- **界面设置**: 左键 / 右键开关 (默认均关闭 → 不点击); 默认点击间隔范围为 **0.05–40 tick** (普通点击 ±0.25, Shift 点击 ±0.05), 区间、步进与单 tick 连点上限均可配置
-- **一格容积**: 放入点击时假玩家手持的物品 (如骨粉 / 桶 / 种子), 消耗后回写; 可用**相邻漏斗** (输出对准本机) 或物流网络补料
-- 以服务端真实交互 (NMS) 点击: 支持原版方块 (按钮 / 拉杆 / 骨粉等)、Slimefun **单方块** (直派处理, **绕过研究解锁**) 与 **多方块结构** (磨石等)
-- 左键破坏方块 / 右键交互
-- 左右键分别按真实机器放置者的破坏 / 方块交互权限检查；旧版本机器即使残留历史 owner，也会在领地内首次运行时自动绑定领地主人
-- **抽取升级** (可选): 界面内可安装抽取升级, 补料源从"仅相邻漏斗"扩展为**相邻漏斗 / 箱子 / 本插件存储容器**, 按配置的单 tick 吞吐补料, 并可配置黑 / 白名单与生效面
+The menu supports:
 
-研究解锁: **15 级经验**。**合成** (增强工作台): 观察者居中, 红石供能, 金锭 + 金块 + 红石块环绕。
+- Up to 7 weapons
+- Looting / Sharpness / Fire Aspect books
+- Food converted into attack capacity
+- Range upgrades
+- Damage upgrades
+- Hopper and Slimefun Cargo input
 
-### 采石场
+The machine uses an internal fake player so kills behave much more like real player kills, including XP, rare drops, Looting scaling, and Slimefun custom-drop handling.
 
-观察者外观。**脸朝向的圆石**若同时相邻**岩浆**与**水** (不必是源头), 便持续生产 (不破坏该圆石)。本身**无容积**, 产物直接输出到周围的容器 / 抽屉 / 翻页箱。
+The fake player is an internal machine actor only. It does not create a real network connection, join the player list, or behave like a spoofed online player.
 
-- **效率升级 I~V**: 放入独立效率槽, 仅认物品身份且与堆叠数量无关; 基础间隔、基础产量和五档产量全部可配置
-- **地狱岩 / 末地石 / 黑石升级**: 放入独立产物槽后替换默认圆石产物, 可与效率升级同时生效；黑石升级配方更昂贵
-- **溢出策略**: 周围容器放不下时默认丢弃剩余产物, 可配置为掉落在采石场位置
-- 五档效率组件逐级合成 (铜锭 → 铁锭 → 金锭 → 钻石 → 下界合金锭环绕上一档)
+Territory and protection checks are always restored to the real machine owner before protected actions are accepted.
 
-研究解锁: **12 级经验**。**合成** (增强工作台): 观察者居中, 圆石四角, 水桶 + 岩浆桶 + 活塞 + 红石块。
+### Auto Clicker
 
-黑石产物升级使用黑曜石四角、黑石四边与钻石块中心合成，不消耗远古残骸，保持无中生有的资源起步逻辑。
+A redstone-powered observer machine that performs real server-side left/right-click interactions on the block in front of it.
 
-### 矿物勘察尺
+Features include:
 
-铜锄外观的手持工具。**右键地面不锄地**, 而是模拟 **工业矿机** 的采掘范围 (以点击方块为中心 7×7, 自点击高度向下直到世界底部) 向下勘探, 按数量降序列出可开采的矿石种类与中文名称。
+- Independent left-click and right-click toggles
+- Configurable click interval from very fast sub-tick rates to slower intervals
+- One held-item slot for bone meal, buckets, seeds, and similar interaction items
+- Hopper and Cargo refill support
+- Optional Extraction Upgrade support
+- Vanilla block interaction
+- Slimefun single-block interaction
+- Slimefun multiblock interaction
+- Protection checks using the actual machine owner
 
-- 判定口径与工业矿机一致 (石头系 / 深板岩系 / 下界系矿石 + 镶金黑石)
-- **潜行 + 左键**: 切换展示形式 —— 聊天栏 (默认) 或 **箱子界面** (每种矿石一个原矿图标, 名称为中文矿名, 数量写入堆叠数与提示; 界面只读, 无法取物)
-- **总量与燃料估算**: 聊天抬头与箱子界面标题均披露 `共 N 个` 及三种工业矿机开采燃料的用量估算 (`(N/96)桶 (N/128)原 (N/256)燃`), 便于材料规划
-- 使用原版物品冷却 (默认 **5 秒**), 物品栏显示冷却遮罩
+### Quarry
 
-**合成** (增强工作台): 铜锄 + 指南针 + 钻石 (竖列)。
+A resource generator based on a cobblestone/lava/water structure.
 
-### 进阶矿物勘察尺
+If the cobblestone in front of the Quarry touches both lava and water, the Quarry generates output without consuming the cobblestone.
 
-钻石锄外观。支持两种勘探范围, **潜行 (Shift) + 右键空气**在两者间切换, 右键地面按**当前**范围向下勘探 (一次仅输出一段, 避免信息过载):
+Supported upgrades include:
 
-- **进阶工业矿机** 范围 (11×11) —— 默认
-- **工业矿机** 范围 (7×7)
+- Efficiency I-V
+- Netherrack output
+- End Stone output
+- Blackstone output
 
-同样支持 **潜行 + 左键**切换展示形式 (聊天栏 / 箱子界面)。当前选中范围与展示形式均随物品保存 (存于物品数据), 切换时会提示切换到的状态。
+Output is pushed directly into nearby compatible containers, drawers, or paged storage boxes.
 
-> 说明: 两型矿机可开采的矿石**种类相同** (进阶矿机仅继承普通矿机的矿石集合), 差异在于采掘范围与精准采集。因此切换的核心区别是范围大小。
+### Ore Surveyor
 
-**合成** (增强工作台): 钻石锄 + 指南针 + 钻石块 (竖列)。
+A handheld tool that scans the same general mining footprint used by Slimefun Industrial Miners and reports mineable ores below the selected location.
 
-### 工程师护目镜
+The basic tool uses a 7x7 area. The advanced tool can switch between 7x7 and 11x11 scan sizes.
 
-铁头盔外观的穿戴工具。戴入头盔栏后，每 10 tick 扫描同世界三维距离 16 格内的已加载区域，显示全部已放置
-Slimefun 方块、注册多方块及扩展 API 注册结构的名称。全息图由 DecentHolograms 发包，只向佩戴者显示，不创建可点击命中箱。
+Display modes:
 
-- 储能组件显示真实当前电量/容量，并按相邻采样显示净流入或净流出 (`J/s`)
-- 标准加工机器显示额定耗电，发电组件显示当前 API 发电量；第三方附属未公开的数据不会被伪造
-- 原生多方块与扩展结构按 `16×16×16` 空间单元建立全服共享索引，方块变化只局部失效；普通机器按刷新轮次共享已加载区块快照
-- 每轮默认最多新扫描 4 个空间单元（可配置）并轮换玩家起点，避免首次佩戴形成主线程尖峰；索引限制为 4096 个最近访问单元
-- 区块装卸会清理边界结果；工作状态与能源详情按目标共享，全息文字未变化时不重复发包
-- 主手持护目镜潜行左键可打开 ChestMenu 多选筛选；可按 Slimefun 注册分类、单个物品类型、附属插件、机器种类和工作状态组合过滤
-- 筛选界面中央可切换“附近显示”与“瞄准显示”；瞄准模式仅显示视线命中的普通机器或任意有效多方块结构成员
-- 五类筛选页签使用独立图标、醒目名称颜色及当前页附魔光效，便于快速区分正在管理的筛选维度
-- 机器种类包括多方块、生成器、模板机器、配方机器、耗电组件、电池、连接器与其它方块；潜行右键目标可直接切换该物品类型
-- 工作状态优先读取公开的机器处理器，其次读取发电输出；无法可靠判断的第三方机器归入“状态未知”筛选，但不显示无意义的状态行
-- DecentHolograms 2.10.1 是可选依赖；缺失时 SlimeEasy 仍可启动，但护目镜只提示显示不可用
+- Chat report
+- Read-only inventory GUI
 
-研究解锁: **12 级经验**。**合成** (增强工作台): 玻璃板、红石、铁头盔与指南针。
+Reports include ore quantities and configurable Industrial Miner fuel estimates.
 
-使用 Slimefun 的**夜视眼镜**与**工程师护目镜**在增强工作台纵向合成**工程师夜视护目镜**。组合型号继承
-持续夜视、机器诊断、私有全息图及完整筛选交互，并与基础型号共用工程师护目镜研究；重新登录后会由护目镜任务
-立即补齐夜视，不依赖 Slimefun 异步护甲档案的首次刷新时机。
+### Engineer Goggles
 
-附属插件可依赖 SlimeEasy，通过公开 API 为自己的目标追加或修改护目镜内容，无需访问扫描缓存或 DecentHolograms：
+Engineer Goggles display information about nearby Slimefun machines and registered multiblock structures.
+
+They can show:
+
+- Machine/item name
+- Stored energy and capacity
+- Estimated net energy flow
+- Rated energy consumption
+- Current generation
+- Machine working/idle state when the addon exposes reliable state data
+
+The filter GUI can filter by:
+
+- Slimefun category
+- Individual item type
+- Addon
+- Machine function/type
+- Working state
+
+Display modes include:
+
+- Nearby machines
+- Aimed target only
+
+DecentHolograms is optional. If it is not installed, SlimeEasy still starts; only the hologram display is unavailable.
+
+#### Engineer Goggles API
+
+Other addons can extend the displayed information without accessing SlimeEasy's internal scan cache:
 
 ```kotlin
 EngineerGogglesApi.registerProvider(this) { context, content ->
-    if (context.slimefunItem.id.startsWith("SB_")) {
+    if (context.slimefunItem.id.startsWith("MY_ADDON_")) {
         content.details += myLocalizedLine(context.block)
     }
 }
 ```
 
-不进入 Slimefun 原生方块/多方块注册表的设备，可额外注册通用结构目标。解析函数只会收到已加载且材质匹配的候选中心，
-必须返回包含中心在内的真实成员块；空集合表示不匹配：
+Addons may also register custom machine structures that are not present in Slimefun's normal block or multiblock registry.
 
-```kotlin
-private val customTarget = Function<Block, Collection<Block>> { center ->
-    findCustomMachineMembers(center) ?: emptyList()
-}
+### Engineer Night Vision Goggles
 
-EngineerGogglesApi.registerTargetProvider(
-    this,
-    MyItems.CUSTOM_MACHINE,
-    setOf(Material.BARREL),
-    1,
-    customTarget
-)
+Combines Slimefun Night Vision Goggles with Engineer Goggles. The combined item keeps the machine diagnostics/filter behavior while continuously providing night vision when worn.
+
+### Growth Inhibitor
+
+Right-click a baby breedable mob to lock its age and prevent it from growing up. Right-click it again to remove the lock.
+
+Display entities used by SlimeEasy machines are ignored.
+
+### Combat Harness
+
+Four tiers of Happy Ghast harnesses add automatic Guardian-beam combat.
+
+- Attacks hostile mobs in line of sight
+- Does not shoot through blocks
+- Uses configurable magic damage that ignores armor
+- Configurable range, cooldown, and target-scan interval
+- Four damage tiers by default: 5 / 10 / 20 / 25
+
+## Storage System
+
+SlimeEasy includes a large-capacity storage system using long integer counts rather than vanilla stack limits.
+
+### Mass Storage Drawer
+
+Stores one item identity in very large quantities.
+
+- Front item display
+- Right-click to deposit
+- Double-click to deposit matching inventory items
+- Left-click to withdraw one
+- Shift + Left-click to withdraw a stack
+- Upgrade GUI
+- Slimefun Cargo support
+- Experience-storage mode
+
+### Paged Storage Box
+
+Stores multiple item identities using a paged interface.
+
+- Configurable item types per page
+- Multiple expansion pages
+- Upgrade GUI
+- Cargo support
+- High per-type capacity
+
+### Item Storage Disks
+
+The Disk Manager uses the six slots of a chiseled bookshelf to hold and visually display storage disks.
+
+Available capacities:
+
+- 1K
+- 4K
+- 16K
+- 64K
+- 128K
+- 256K
+
+Disk contents are persisted by UUID through Slimefun data storage, so removing or dropping a disk does not erase its contents.
+
+Each disk supports up to 64 distinct full item identities.
+
+### Storage Network
+
+A Network Controller connects nearby SlimeEasy storage into a single accessible network.
+
+Components include:
+
+- Network Controller
+- Network Connector
+- Network Input Port
+- Network Output Port
+- Remote Terminal
+
+The aggregated network terminal combines matching items from all network members into one searchable/sortable interface.
+
+Input/output ports support:
+
+- Cargo mode
+- Active adjacent I/O mode
+- Combined mode
+- Full item-identity blacklist / whitelist filters
+- Per-face enable/disable controls
+
+### Storage Upgrades
+
+Available upgrades include:
+
+- Stack Upgrade I / II / III
+- Experience Storage Upgrade
+- Magnet Upgrade
+- Void Upgrade
+- Extraction Upgrade
+- Item Output Upgrade
+- Page Expansion
+- Wise Upgrade
+- Ender Wise Upgrade
+- Remote Upgrade
+- Compression Upgrade
+- Advanced Compression Upgrade
+
+## Simple Territory
+
+The Territory system provides lightweight chunk claiming that integrates with Slimefun protection checks.
+
+### Territory Core
+
+Placing a Territory Core claims a 3x3 chunk area centered on the core.
+
+- One owned territory per player
+- Players may still join multiple other territories
+- Right-click to manage the territory
+
+### Territory Flags
+
+Each Territory Flag adds another 3x3 claimed area centered on the flag.
+
+- Up to 35 flags per territory
+- Flag areas may overlap
+- The complete claim must remain connected to the Territory Core
+- Holding a flag displays nearby claimed borders with particles
+
+### Members and Permissions
+
+Per-member permissions include:
+
+- Break blocks
+- Place blocks
+- Interact with blocks/containers
+- PvP
+- Attack entities
+- Interact with entities
+
+Management delegation can separately allow members to manage:
+
+- Members
+- Permissions
+- Chunks
+- Flag appearance
+- Territory settings
+
+Visitors have separate default permissions and entry settings.
+
+Territory checks integrate with Slimefun's `ProtectionManager` and do not intentionally bypass other protection systems such as WorldGuard.
+
+Dynamic territory data is stored in:
+
+```text
+plugins/SlimeEasy/territories.yml
 ```
 
-- `EngineerGogglesContentProvider` 按注册顺序同步执行，适合 SlimeBotania 等依赖方的高频稳定扩展
-- `registerTargetProvider` 只用于原生注册表无法发现的结构；SlimeEasy 仍负责空间扫描、缓存、瞄准命中和筛选
-- 目标解析函数必须是主线程常数时间邻块检查，不得扫描世界、加载区块、执行 I/O 或跨 tick 保存参数
-- `EngineerGogglesDisplayEvent` 在提供器之后触发，可修改标题和详情、设置 `content.visible` 或取消单次目标显示
-- 依赖插件关闭时两类提供器都会自动注销；也可调用对应的 `unregisterProvider` / `unregisterTargetProvider` 主动清理
-- 当前 `EngineerGogglesApi.API_VERSION` 为 `2`；公开渲染上下文仍只包含玩家、目标方块、Slimefun 物品和多方块标记
+## Simple Villagers
 
-### 生长抑制器
+These machines allow villagers to be safely stored as items and used by automated systems.
 
-史莱姆球外观的手持工具。右键一只**幼年生物** → 锁定其年龄 (原版 `AgeLock`), 使其**永远保持幼小、不再长大**; 再次右键已锁定的生物则解除锁定, 恢复正常生长 (开关语义)。
+### Villager Catcher
 
-- 仅对可繁殖生物 (动物 / 村民等) 生效; 成年个体给出提示而不缩小
-- 展示实体 (交易器 / 刷铁机内嵌村民) 一律跳过
+Captures a Villager or Zombie Villager while preserving its serialized attributes, profession, level, experience, and trades. Sneak + Right-click releases it.
 
-研究解锁: **10 级经验**。**合成** (增强工作台): 史莱姆球 + 蜂巢 + 命名牌。
+### Zombie Signal
 
-### 战斗挽具
+A reusable catalyst required by the Capsule Iron Farm.
 
-基于原版彩色**挽具**的 4 档装备。手持右键**快乐恶魂 (乐魂)** 即由原版装备 (Slimefun 数据保留)。佩戴后乐魂以 **守护者激光** 主动攻击周围**视线内** (不穿透方块) 的敌对生物 (含**幻翼**、恶魂、史莱姆等):
+### Villager Trader
 
-- 每次激光造成**魔法 (药水) 伤害, 无视护甲**; 四档默认分别为 **5 / 10 / 20 / 25** 点
-- 默认交战半径 16 格、开火间隔约 1.5 秒; 伤害、范围、冷却与扫描周期均可配置
-- 玩家与乐魂始终安全, 无需操心保护实体
+Stores a captured villager and workstation and exposes trading through a virtual merchant interface.
 
-研究解锁: **20 级经验**。**合成** (增强工作台): 以海晶碎片 → 海晶砂粒 → 海晶灯 → 下界之星逐档升级 (I→II→III→IV)。
+When the villager profession matches the installed workstation, trades are automatically restocked at the configured interval.
 
-### 存储系统
+### Capsule Iron Farm
 
-一套海量存储方块与存储网络, 归入独立分类 **存储系统**。真实存量以 long 计, 远超原版堆叠上限, 界面中以千分位 / 紧凑单位 (K/M/B) 展示。抽屉与翻页箱通过 Slimefun 方块数据写入其 SQL 后端；可移动磁盘改用 UUID 主键的 Slimefun UniversalData，物品 PDC 不承载库存明细。
+Produces iron over time when supplied with:
 
-#### 海量抽屉
+- Villager
+- Zombie Signal
+- Food
 
-木桶外观。存储**单一种类**物品 (首次放入即锁定), 默认 32 内部槽位, 单槽容量 = 原版堆叠 × 堆叠升级倍率。
+Speed Upgrades reduce the production interval.
 
-- 朝向玩家的一面生成隐形展示框显示物品图标; **准星对准展示框**时以物品名浮现当前存量
-- **展示框交互**: 右键存入手中该组 / 双击存入背包全部同类; 左键取一个 / 潜行左键取一组
-- **右键木桶本体**: 打开操作界面 (取出 + 升级入口); 经验模式则打开经验存取界面
-- 可接入原版货运网络 (无限容量的入口 / 出口缓冲)
+### Villager School
 
-研究解锁: **8 级经验**。
+Converts a captured Nitwit Villager into an unemployed villager after a configurable delay.
 
-#### 翻页存储箱
+### Potion of Forgetting
 
-木桶外观。存储**多种**物品 (每种一格, 默认每页 45 种), 分页界面存取, 每格数量远超原版堆叠。
+Makes a living villager forget its profession and return to an unemployed state.
 
-- 右键打开分页界面: 点击箱内物品取出 (左键一组 / 右键一个), 点击背包物品存入
-- 每格按"原版堆叠 × 堆叠升级倍率"拆格显示, 溢出自动占用新格
-- 装 **翻页扩容** 升级可增页 (基础 1 页, 默认最多扩至 5 页)
-- 界面内可打开升级 GUI; 可接入原版货运
+### Villager Healer
 
-研究解锁: **15 级经验**。
+Cures a captured Zombie Villager using a regular Golden Apple after a configurable delay.
 
-#### 物品存储磁盘
+## Configuration and Language
 
-**磁盘管理器**使用雕纹书架外观，六个原生书槽分别安装并直接展示 1K / 4K / 16K / 64K / 128K / 256K 磁盘。右键打开独立界面查看每盘状态、安装或拆卸磁盘；书本 PDC 只保存磁盘 UUID，完整库存通过 UUID 写入并查询 Slimefun UniversalData，最终由 Slimefun 配置的 SQL 后端持久化，拆下与掉落后仍会保留。
+Default configuration:
 
-- 每张磁盘最多存储 **64 种**完整身份不同的物品；Material、metadata、NBT 任一不同均按不同种类计算
-- 总字节数 = `已用种类数 × 规格 K 数 × 8 + 总物品数 / 8`，总容量 = `规格 K 数 × 1024` 字节
-- 非空磁盘不能作为物品存入另一张磁盘，避免递归存储；空磁盘允许正常存储
-- 管理器可作为存储网络成员，由网络聚合终端与输入 / 输出端口存取内容
+```text
+plugins/SlimeEasy/config.yml
+```
 
-研究解锁: **25 级经验**。
+Default language:
 
-#### 存储网络
+```yaml
+language: en_US
+```
 
-以**网络控制器**为核心, 相邻方块自动组网 (亦可用连接器延伸), 默认覆盖半径 **24 格**。研究解锁默认 **30 级经验**。
+Bundled locales:
 
-- **网络控制器** (雕纹书架): 右键打开**聚合终端**, 一处存取全网抽屉 / 存储箱 / 磁盘管理器库存。每种物品**一个图标**、总量写入 lore (不平铺拆格); 终端支持**按名称 / 存量排序**与**正序 / 倒序切换**, 排序偏好按玩家持久化。每 tick 统一驱动输入 / 输出端口的缓冲桥接与主动相邻 IO
-- **网络连接器** (铁栏杆): 网络导线, 相邻即导通, 无需朝向
-- **网络输入端口** (投掷器): 右键打开 27 格端口面板；货运或玩家放入缓冲的物品按优先级分发进网络，也可主动从启用面的相邻原版容器、外部 SlimeEasy 存储或 Slimefun 标准 `WITHDRAW` 输出槽抽取
-- **网络输出端口** (发射器): 右键配置后可把网络物品提供给玩家 / 货运，或主动推送至启用面的相邻原版容器、外部 SlimeEasy 存储或 Slimefun 标准动态 `INSERT` 输入槽
-- 两类端口均支持 **货运 / 主动 / 同时** 三种模式，以及完整物品身份黑白名单和六面开关；旧端口默认保持货运模式。主动 IO 会跳过当前网络成员，并以端口 owner 身份检查相邻位置的领地交互权限
-- **远程终端** (末影之眼): 可绑定多个控制器并记住上次选择; 普通右键打开当前终端, 聚合终端“下一页”左侧按钮轮换目标, **Shift+右键**打开分页管理 UI (左键选择、右键移除)。绑定数量可配置, 绑定与远程访问均检查目标控制器的 Slimefun 权限
+```text
+lang/en_US.yml
+lang/zh_CN.yml
+```
 
-#### 升级组件
+`en_US` is the built-in fallback. If a selected locale is missing a key, SlimeEasy falls back to the bundled English value.
 
-在抽屉 / 存储箱的升级 GUI 中安装生效。研究解锁: **20 级经验**。
+`/se reload` with `slimeeasy.admin` reloads runtime configuration and language files.
 
-- **堆叠升级 I / II / III**: 单格容量 ×4 / ×16 / ×64
-- **经验存储升级**: 抽屉 / 存储箱改为存储经验 (拒绝物品货运), 按等级存取；取出默认直接增加玩家经验，也可在经验界面切换为掉落经验球
-- **磁铁升级**: 每 tick 吸附附近 6 格内的掉落物 / 经验球
-- **虚空升级**: 命中销毁列表的物品入库前湮灭 (在 GUI 内配置销毁列表)
-- **抽取升级**: 每 tick 从相邻六向的漏斗 / 箱子 / 本插件存储容器主动提取物品入库; 可在 GUI 内配置黑 / 白名单与**生效面**。亦可安装在**自动点击器**上作补料来源
-- **物品输出升级**: 每 tick 把库存物品主动推送到相邻六向的容器; 同样支持黑 / 白名单与生效面配置。抽取/输出的每容器单 tick 吞吐、过滤名单上限和默认模式均可配置
-- **翻页扩容**: 为翻页箱增加 1 页 (可叠装, 最大页数由配置决定; 对抽屉无效)
-- **智者 / 末影智者升级**: 经验容器吸入经验时有 20% / 50% 概率翻倍 (需与经验 + 磁铁升级同装)
-- **远程升级**: 手持右键网络控制器选定目标, 装入抽屉 / 箱子后使其**远程接入**该控制器网络 (无视物理相邻范围); 选定目标时检查控制器的 Slimefun 权限
-- **压制升级 / 高级压制升级**: 仅适用于翻页箱；普通版按 2×2 压缩配方、高级版额外按 3×3 压缩配方，将后续发生数量变化且通过 17 格黑 / 白名单过滤的物品自动压成对应变体。默认跳过不可逆配方，可在升级 GUI 中开启
+Changes that can normally apply immediately include runtime values such as:
 
-### 简易的领地
+- Damage
+- Range
+- Cooldowns
+- Intervals
+- Output rates
+- I/O throughput
+- Limits
 
-放置**领地核心**后自动认领以所在区块为中心的 3×3 区域。每名玩家只能拥有一个领地，但可以加入多个其他玩家的领地。每面**领地旗帜**同样以所在区块为中心声明 3×3 区块，最多放置35面；同一领地的旗帜覆盖可以重叠，实际权限范围取核心与全部旗帜覆盖的并集，任何扩展或拆除后都必须保持该并集与核心连续。手持领地旗帜时会用高密度粒子显示附近可管理领地的已声明外边界。
+Changes to registered content such as feature toggles, research levels, registered item text, categories, or already-cached menu content may require a full server restart.
 
-右键核心或已绑定旗帜打开身份感知的管理界面：普通成员只读查看自己的权限，受委派的管理者才会看到对应成员操作。邀请成员时打开在线玩家头颅分页列表，点击头像选择后再按确认按钮发送 5 分钟邀请；不可见玩家、主人和已有成员不会出现在候选列表中。领地转让继续使用 60 秒精确名称输入与在线确认，成员移除必须二次确认。可以逐成员设置破坏/放置/方块交互/PvP/实体攻击/实体交互权限，并分别委派成员、权限、区块、旗帜样式和设置管理能力。新成员拥有独立的默认行为与管理权限模板，因此可默认允许成员邀请新人、扩展区块或更新旗帜，同时不会改动已经加入的成员。
+Do **not** use PlugMan or `/reload` to hot-unload Slimefun addons.
 
-打开旗帜编辑器后，直接点击玩家背包中的任意原版旗帜即可读取模板，模板不会移动或消耗；导入后会同步底色与全部图案层到该领地所有已绑定旗帜，之后新放置的旗帜也会立即继承完整样式。破坏旗帜只掉落默认的无花纹领地旗帜，不复制领地外观。陌生人拥有独立默认权限，可设置是否允许进入以及是否允许使用由其他插件或游戏模式提供的飞行能力。
-
-领地以保护模块接入 Slimefun 的 `ProtectionManager`，Slimefun 方块与非 OP 自动机器会遵守相同领地判断，同时不会绕过 WorldGuard 等其它保护模块。自动机器始终按真实放置者鉴权；没有新绑定版本标记的旧机器即使残留历史 owner，在领地外也保持未绑定并正常运行，被领地覆盖后会在首次操作时写入并永久绑定当时的领地主人 UUID。屠夫的假玩家伤害会在鉴权时还原为该机器放置者，因此领地主人及拥有实体攻击权限的成员可以正常运行机器；OP 放置者按服务器管理员语义在机器前置与伤害阶段直接放行。领地还保护原版建造、容器、实体、桶、点火、载具、爆炸、活塞、液体和火焰跨边界行为；进入、离开或切换领地时使用动作栏提示，禁入提示会自动限频。动态数据保存在 `plugins/SlimeEasy/territories.yml`。研究解锁: **8级经验**。
-
-### 简易村民
-
-一套"把村民收进物品、放进机器"的内容, 归入独立分类 **简易村民**。各机器的时间间隔可在 `config.yml` 自定义 (补货 / 产铁 / 转化 / 治愈), 均以墙钟时间判定, 不受服务器重载影响。
-
-#### 村民捕捉器
-
-玻璃瓶外观。右键一只活体**村民或僵尸村民** → 保留其全部属性 (职业 / 变种 / 等级 / 经验 / 交易) 收入瓶中; **潜行 + 右键**放出该村民 (僵尸村民放出仍为僵尸村民)。空捕捉器亦作为交易器 / 刷铁机 / 小学 / 治愈机的合成材料。研究解锁: **12 级经验**。
-
-#### 僵尸信号
-
-僵尸头外观。以腐肉与铁锭合成的诱导信号, 胶囊刷铁机的必备催化剂 (装入即可, 不消耗)。研究解锁: **8 级经验**。
-
-#### 村民交易器
-
-透明玻璃, 内嵌一只缩小的展示村民。玩家与其交易走**虚拟商人**, 无需操心保护实体村民。
-
-- **空块右键**: 放入村民 (满捕捉器) 或工作站方块; **已装村民时右键**: 直接打开交易界面; **潜行 + 右键**: 取出村民或工作站方块
-- 装配的村民职业**与工作站方块匹配**时, 按配置间隔**自动补货** (重置交易次数), 不受时间 / 范围等外部因素影响
-
-研究解锁: **18 级经验**。
-
-#### 胶囊刷铁机
-
-透明玻璃, 内嵌村民与僵尸展示, 产铁瞬间闪现铁傀儡。右键打开界面放入 **村民 (满捕捉器) + 僵尸信号 + 食物**, 三者齐全时按周期产出铁锭 (消耗少量食物; 装**速度升级**缩短周期)。研究解锁: **20 级经验**。
-
-#### 村民小学
-
-讲台外观。放入**傻子 (呆滞) 村民** (满捕捉器), 按配置时间后转化为**无职业普通村民** (可再就业), 结果落入输出槽。研究解锁: **15 级经验**。
-
-#### 遗忘药剂
-
-右键一只活体村民 → 使其**忘却职业**, 变回无职业普通村民, 每次消耗一瓶。研究解锁: **12 级经验**。**合成**: 水瓶居中 + 恶魂之泪 + 发酵蛛眼 + 荧石粉。
-
-#### 村民治愈机
-
-金块外观。放入**僵尸村民** (满捕捉器) 与**普通金苹果**, 按配置时间后将其**治愈为普通村民** (保留职业), 每次消耗一个金苹果。研究解锁: **15 级经验**。
-
-## 配置与重载
-
-默认配置位于 `plugins/SlimeEasy/config.yml`, 仓库模板见 `src/main/resources/config.yml`。`language` 指定语言文件名，默认 `zh_CN`，对应 `plugins/SlimeEasy/lang/zh_CN.yml`。
-
-| 配置段 | 主要内容 |
-|---|---|
-| `machine` | 自动破坏机 / 放置机的展示框调频 |
-| `creeper-ward` | 保护半径、驱逐力度、缓存与扫描上限 |
-| `butcher` | 攻击范围、伤害成长、食物折算与升级上限 |
-| `auto-clicker` | 点击间隔、调整步进、连点与升级补料上限 |
-| `quarry` | 基础间隔、基础/五档产量与溢出策略 |
-| `survey-ruler` | 冷却、扫描范围与燃料估算参数 |
-| `combat-harness` | 四档伤害、交战范围、冷却与扫描周期 |
-| `storage` | 容量、磁吸、升级/过滤上限、搬运吞吐、网络半径与远程绑定上限 |
-| `villager` | 补货、产铁、转化、治愈时间与产量 |
-| `territory` | 领地分类开关与研究等级 |
-
-- `/se reload` (`slimeeasy.admin`) 可即时重载运行时数值和当前语言文件。
-- 后续读取的消息与界面文本重载后立即生效；物品、分类、研究及已缓存界面文本与功能开关修改后需重启服务端。
-- 语言文件按 `items`、`groups`、`menus`、`messages`、`names`、`research` 等功能层级组织，禁止使用无语义数字键。
-- 物品与 UI 节点统一使用 `name` + `lore`；Lore 使用 YAML `|-` 多行块，颜色码使用 `&`，动态值使用 `{placeholder}`。
-- 自定义语言缺失的键自动回退到插件内置简体中文。
-- 时间单位以字段注释为准: `seconds` 使用墙钟时间, `ticks` 使用 Bukkit / Slimefun 调度单位。
-
-## 从源码构建
+## Building from Source
 
 ```bash
 ./gradlew build
 ```
 
-产物位于 `build/libs/SlimeEasy-<version>.jar`。Kotlin 运行库不打入产物，由纯 Java `SlimeEasyLoader` 在插件主类加载前通过 Paper 默认 Maven 镜像解析。
+The plugin JAR is written to:
 
-本地起测试服 (由 run-paper 提供):
+```text
+build/libs/SlimeEasy-<version>.jar
+```
+
+A local Paper test server can be launched with:
 
 ```bash
 ./gradlew runServer
 ```
 
-`runServer` 会直接加载 `build/libs` 中的开发插件，不要再把 SlimeEasy JAR 手工复制到 `run/plugins`；任务启动前也会清理该目录中的旧副本。Slimefun 附属注册表不支持热卸载，更新插件后必须完整停止并重新启动服务端，不要使用 PlugMan 或服务器 `/reload`。
+## Project Structure
 
-## 项目结构
-
-```
+```text
 src/main/kotlin/top/maplex/slimeEasy/
-├── SlimeEasy.kt              插件主类 (入口)
-├── SlimeEasyAddon.kt         Slimefun 附属身份
-├── api/goggles/             护目镜内容与自定义结构目标公开扩展 API
-├── config/                   配置读取与独立 i18n 语言服务
-├── machine/
-│   ├── common/               机器共享层
-│   │   ├── PistonSupport      活塞方向 / 目标方块定位
-│   │   ├── FrequencyResolver  相邻红石块调速
-│   │   └── BlockEffect        破坏 / 放置音效与粒子
-│   ├── breaker/              自动破坏机
-│   ├── placer/               自动放置机
-│   ├── butcher/              屠夫机器 (假玩家攻击 / 掉落与研究补偿 / 展示与横扫)
-│   ├── clicker/              自动点击器 (NMS 真实点击 / UI 设置 / 漏斗 / 抽取升级补料)
-│   └── quarry/               采石场 (圆石生成结构 / 效率与产物升级 / 输出到相邻容器)
-├── feature/ward/             苦力怕驱逐方块
-│   ├── CreeperWard            方块本体 + ticker (续期 + 驱逐 + 兜底移除)
-│   ├── ProtectedChunks        受保护区块 TTL 登记 + 全局出口方向
-│   └── CreeperControlListener 生成拦截 + 爆炸拦截
-├── feature/survey/           矿物勘察尺
-│   ├── SurveyRuler            勘察尺本体 (取消锄地 + 原版冷却 + 分层扫描)
-│   ├── SurveyScanner          区域矿石扫描 (与矿机采掘几何一致)
-│   ├── SurveyGui              勘察结果箱子界面 (只读)
-│   ├── SurveyFormat           总量 + 燃料用量估算文案 (标题 / 聊天共用)
-│   ├── SurveyState            展示形式 / 层级偏好 (存于物品 PDC)
-│   ├── MineableOres           可挖矿石判定 (同 IndustrialMiner.canMine 口径)
-│   └── OreNames               矿石中文名映射
-├── feature/growth/           生长抑制器 (锁定幼年生物年龄)
-├── feature/goggles/          工程师护目镜 (机器扫描 + 私有 DH 全息图 + 能源采样)
-├── feature/harness/          战斗挽具 (乐魂守护者激光作战)
-├── storage/                  存储系统
-│   ├── core/                 库存核心 (VirtualStorage / ItemKey / 货运缓冲基类 / 容器进出 ContainerIO / 升级与过滤 GUI)
-│   ├── drawer/               海量抽屉 (方块 + 展示框 + 交互监听 + 经验 / 磁铁 / 虚空)
-│   ├── box/                  翻页存储箱 (分页界面 + 存取)
-│   ├── disk/                 磁盘管理器 (六槽书架展示 / UUID + UniversalData / 字节容量 / 独立界面)
-│   ├── network/              存储网络 (控制器访问服务 / 连接器 / 端口 / 多绑定远程终端 / 聚合终端)
-│   └── upgrade/              升级组件 (类型 / 存取 / 虚空过滤 / 抽取输出黑白名单与生效面)
-├── territory/                简易领地 (模型 / YAML 存档 / 权限索引 / Slimefun 保护 / 菜单 / 邀请与命令)
-├── villager/                 简易村民
-│   ├── core/                 村民快照 / 序列化 / 展示实体 / 工作站映射 / 配置
-│   ├── catcher/              村民捕捉器 (捕捉 / 释放村民与僵尸村民)
-│   ├── trader/               村民交易器 (虚拟商人 + 补货)
-│   ├── ironfarm/             胶囊刷铁机
-│   ├── school/               村民小学 (傻子转无职业)
-│   ├── healer/               村民治愈机 (僵尸村民治愈)
-│   └── potion/               遗忘药剂
-├── registry/                 物品 / 分类 / 研究 / 配方注册
-└── util/                     跨模块小型工具 (方块位置键与持久化坐标编解码)
+├── api/goggles/        Engineer Goggles extension API
+├── config/             Configuration and i18n
+├── feature/            Utility tools and standalone features
+├── machine/            Breaker, placer, butcher, clicker, quarry
+├── registry/           Slimefun items, groups, research, recipes
+├── storage/            Drawers, boxes, disks, networks, upgrades
+├── territory/          Claim model, persistence, permissions, menus
+├── villager/           Catcher, trader, iron farm, school, healer
+└── util/               Shared helpers
 
 src/main/resources/
-├── config.yml                功能开关与运行参数
-└── lang/zh_CN.yml            简体中文名称、Lore、菜单与消息
+├── config.yml
+├── paper-plugin.yml
+└── lang/
+    ├── en_US.yml
+    └── zh_CN.yml
 ```
 
-## 持续集成
+## CI / Development Builds
 
-每次推送触发 GitHub Actions 构建; `main` 分支构建成功后自动更新 `latest` 滚动发布 (预发布)。特性分支仅构建, 不发布。
+Every push is built by GitHub Actions. Successful `main` builds update the rolling `latest` prerelease automatically.
+
+## Credits
+
+SlimeEasy was originally developed by [FxRayHughes](https://github.com/FxRayHughes/SlimeEasy). This fork maintains its own changes and English localization.
