@@ -9,7 +9,7 @@ import java.io.File
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
-/** SlimeEasy 的独立语言文件服务。 */
+/** SlimeEasy's standalone localization service. */
 object I18n {
 
     data class Display<T>(val name: T, val lore: List<T>)
@@ -18,7 +18,7 @@ object I18n {
     private val sectionSerializer = LegacyComponentSerializer.legacySection()
     private lateinit var language: YamlConfiguration
 
-    /** 加载配置指定的语言文件；缺失文件或键均回退到插件内置简体中文。 */
+    /** Loads the configured language file. Missing files or keys fall back to bundled English. */
     fun load() {
         val plugin = SlimeEasy.instance
         val locale = SEConfig.language
@@ -42,34 +42,34 @@ object I18n {
         }
     }
 
-    /** 读取保留 `&` 颜色码的原始文本，供 SlimefunItemStack 等 API 使用。 */
+    /** Returns raw text with `&` color codes preserved for SlimefunItemStack and similar APIs. */
     fun raw(key: String, vararg placeholders: Pair<String, Any?>): String =
         format(language.getString(key) ?: missing(key), placeholders)
 
-    /** 读取列表或 YAML 多行块，保留 `&` 颜色码。 */
+    /** Reads a list or YAML multiline block while preserving `&` color codes. */
     fun rawList(key: String, vararg placeholders: Pair<String, Any?>): List<String> =
         values(key).map { format(it, placeholders) }
 
-    /** 读取并转换为 `§` Legacy 颜色码的 Bukkit 文本。 */
+    /** Reads text and converts it to Bukkit `§` legacy color codes. */
     fun text(key: String, vararg placeholders: Pair<String, Any?>): String =
         sectionSerializer.serialize(ampersandSerializer.deserialize(raw(key, *placeholders)))
 
-    /** 读取为 Adventure Component，并显式关闭物品文本默认继承的斜体样式。 */
+    /** Reads text as an Adventure Component and disables inherited item italics. */
     fun component(key: String, vararg placeholders: Pair<String, Any?>): Component =
         withoutItalics(ampersandSerializer.deserialize(raw(key, *placeholders)))
 
-    /** 把已有 `§` Legacy 字符串转换为不带默认斜体的 Adventure 组件。 */
+    /** Converts an existing `§` legacy string to a non-italic Adventure component. */
     fun legacyComponent(value: String): Component = withoutItalics(sectionSerializer.deserialize(value))
 
-    /** 读取列表或 YAML 多行块为不带默认斜体的 Adventure 组件。 */
+    /** Reads a list or YAML multiline block as non-italic Adventure components. */
     fun components(key: String, vararg placeholders: Pair<String, Any?>): List<Component> =
         rawList(key, *placeholders).map { withoutItalics(ampersandSerializer.deserialize(it)) }
 
-    /** 读取 `{base}.name` 与多行 `{base}.lore`，供 Slimefun 物品使用。 */
+    /** Reads `{base}.name` and multiline `{base}.lore` for Slimefun items. */
     fun rawDisplay(base: String, vararg placeholders: Pair<String, Any?>): Display<String> =
         Display(raw("$base.name", *placeholders), rawList("$base.lore", *placeholders))
 
-    /** 读取 `{base}.name` 与多行 `{base}.lore` 为 Adventure 组件，供 UI 图标使用。 */
+    /** Reads `{base}.name` and multiline `{base}.lore` as Adventure components for UI icons. */
     fun componentDisplay(base: String, vararg placeholders: Pair<String, Any?>): Display<Component> =
         Display(
             component("$base.name", *placeholders),
@@ -99,11 +99,11 @@ object I18n {
     }
 
     /**
-     * ItemMeta 会把未指定斜体状态的组件按原版规则显示为斜体；显式设为 false 后，
-     * 名称与每条 Lore 的子组件仍保留各自颜色和其它装饰，只取消继承斜体。
+     * ItemMeta displays components with inherited italics under vanilla rules unless explicitly disabled.
+     * Setting italics to false keeps child colors and decorations while preventing unwanted item-text italics.
      */
     private fun withoutItalics(component: Component): Component =
         component.decoration(TextDecoration.ITALIC, false)
 
-    private const val DEFAULT_LANGUAGE = "zh_CN"
+    private const val DEFAULT_LANGUAGE = "en_US"
 }
