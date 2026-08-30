@@ -7,7 +7,7 @@ loader: top.maplex.slimeEasy.SlimeEasyLoader
 api-version: '26.2'
 load: POSTWORLD
 
-# 依赖声明: Slimefun 必须先于本插件加载, 且本插件需访问其 API 类路径
+# Dependency declaration: Slimefun must load before SlimeEasy and expose its API on the classpath.
 dependencies:
   server:
     Slimefun:
