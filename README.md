@@ -5,7 +5,7 @@
 **Automation, storage, machine diagnostics, villager utilities, fake-player machines, and lightweight territory protection for modern Slimefun servers.**
 
 ![Slimefun Legacy](https://img.shields.io/badge/Slimefun-Legacy-6bd425?style=for-the-badge)
-![Minecraft 1.21.11](https://img.shields.io/badge/Minecraft-1.21.11-62b47a?style=for-the-badge)
+![Minecraft 26.2](https://img.shields.io/badge/Minecraft-26.2-62b47a?style=for-the-badge)
 ![Paper 26.2+](https://img.shields.io/badge/Paper-26.2%2B-blue?style=for-the-badge)
 ![Java 25](https://img.shields.io/badge/Java-25-orange?style=for-the-badge)
 ![English First](https://img.shields.io/badge/Language-English%20First-4c8bf5?style=for-the-badge)
@@ -82,7 +82,7 @@ SlimeEasy Legacy `1.0.1` is maintained for:
 
 | Component | Target |
 | --- | --- |
-| Minecraft | **1.21.11** |
+| Minecraft | **26.2** |
 | Server | **Paper 26.2+** |
 | Java | **25** |
 | Primary Slimefun | **Slimefun Legacy** |
