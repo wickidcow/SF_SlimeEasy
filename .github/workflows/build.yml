@@ -1,12 +1,12 @@
 name: Build
 
-# 每次推送 (任意分支) 与手动触发时构建插件。
-# 推送到 main 且构建成功后, 自动发布为滚动版本 (标签 latest)。
+# Build the plugin on every push and manual dispatch.
+# Successful pushes to main also publish the rolling `latest` prerelease.
 on:
   push:
   workflow_dispatch:
 
-# 发布 Release 需要写入仓库内容的权限
+# Release publishing requires repository content write permission.
 permissions:
   contents: write
 
@@ -15,58 +15,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 检出代码
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 配置 JDK 25 (Temurin)
+      - name: Set up JDK 25 (Temurin)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "25"
 
-      - name: 配置 Gradle (含依赖缓存)
+      - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v4
 
-      - name: 赋予 gradlew 执行权限
+      - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: 构建普通插件 Jar
+      - name: Build plugin JAR
         run: ./gradlew build --no-daemon --stacktrace
 
-      - name: 定位主插件 Jar
+      - name: Locate primary plugin JAR
         id: plugin_jar
         shell: bash
         run: |
           set -euo pipefail
           PLUGIN_VERSION="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
           PLUGIN_JAR="build/libs/SlimeEasy-${PLUGIN_VERSION}.jar"
-          # 只发布无 classifier 的主产物，避免未来 sources/dev Jar 被误当作可安装插件。
+          # Publish only the unclassified primary artifact so future sources/dev
+          # JARs cannot accidentally be treated as installable server plugins.
           test -n "${PLUGIN_VERSION}"
           test -f "${PLUGIN_JAR}"
           echo "path=${PLUGIN_JAR}" >> "${GITHUB_OUTPUT}"
 
-      - name: 上传插件 Artifact
+      - name: Upload plugin artifact
         uses: actions/upload-artifact@v4
         with:
-          # 名称带 commit 短 SHA, 便于区分不同构建
+          # Include the short commit identity in the artifact name for easy comparison.
           name: SlimeEasy-${{ github.sha }}
-          # Kotlin 由 Paper Loader 在运行时提供，发布产物无需内嵌依赖。
+          # Kotlin is provided at runtime through Paper's plugin loader.
           path: ${{ steps.plugin_jar.outputs.path }}
           if-no-files-found: error
           retention-days: 90
 
-      # 仅 main 分支的成功构建才发布滚动版本, 避免特性分支污染 Releases
-      - name: 发布滚动版本 (latest)
+      # Only successful main-branch builds update the rolling release.
+      - name: Publish rolling latest release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           SHA_SHORT="${GITHUB_SHA::7}"
-          # 删除旧的 latest 发布与标签 (若存在), 以当前提交重建, 保证标签指向最新构建
+          # Recreate the latest release/tag at the current main commit.
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
           gh release create latest "${{ steps.plugin_jar.outputs.path }}" \
-            --title "开发版 (latest)" \
-            --notes "由 commit \`${SHA_SHORT}\` 自动构建。这是随 main 分支滚动更新的最新开发版本。" \
+            --title "Development Build (latest)" \
+            --notes "Automatically built from commit \`${SHA_SHORT}\`. This prerelease follows the latest successful main-branch build." \
             --prerelease \
             --target "${GITHUB_SHA}"

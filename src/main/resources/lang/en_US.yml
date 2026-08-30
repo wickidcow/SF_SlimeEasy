@@ -1,0 +1,1656 @@
+# SlimeEasy English (US) language file.
+# Color codes use &; dynamic content uses {placeholder}.
+# Items and UI use nested name/lore keys; lore uses YAML multiline blocks.
+
+items:
+  auto-breaker:
+    name: "&eAuto Breaker"
+    lore: |-
+
+      &7Place a &fregular piston &7next to the machine and it will
+      &7automatically break the block in front of the piston
+      &7and collect the drops into this container.
+
+      &7Place an item frame with a lever on the piston
+      &7and rotate the lever to adjust the breaking interval.
+
+      &7Put a tool in &fany slot &7to mine with that tool
+      &7(including Fortune / Silk Touch). When it breaks,
+      &7the machine uses another tool or falls back to hand mining.
+  auto-placer:
+    name: "&aAuto Placer"
+    lore: |-
+
+      &7Place a &fsticky piston &7next to the machine and it will
+      &7automatically place blocks from this container into
+      &7the empty space in front of the piston.
+
+      &7Place an item frame with a lever on the piston
+      &7and rotate the lever to adjust the placement interval.
+
+      &7The first &fplaceable block &7in the container is used;
+      &7the machine skips a cycle if the target is occupied or empty.
+  sieve:
+    name: "&6Basic Sieve"
+    lore: |-
+
+      &7Structure: place a wooden trapdoor on top of
+      &7an upward-facing dispenser.
+      &7Right-click the top trapdoor to advance sieving.
+
+      &7By default, normal independent chances are halved,
+      &7and the guaranteed stone reward is reduced from 2 to 1.
+      &7Dirt and grass have a higher chance to yield bamboo,
+      &7which can be used to craft scaffolding for the Reinforced Sieve.
+  reinforced-sieve:
+    name: "&eReinforced Sieve"
+    lore: |-
+
+      &7Structure: place scaffolding on an upward-facing dispenser,
+      &7then place a wooden trapdoor on top of the scaffolding.
+
+      &7Right-click the top trapdoor to advance sieving.
+      &7Processes faster and uses the full base reward chances.
+  sieve-materials:
+    dust:
+      name: "&fDust"
+      lore: |-
+        &7Made by grinding sand in a Grind Stone; can be sieved.
+    crushed-netherrack:
+      name: "&cCrushed Netherrack"
+      lore: |-
+        &7Made by grinding netherrack in a Grind Stone; can be sieved.
+    crushed-end-stone:
+      name: "&eCrushed End Stone"
+      lore: |-
+        &7Made by grinding end stone in a Grind Stone; can be sieved.
+    crushed-blackstone:
+      name: "&8Crushed Blackstone"
+      lore: |-
+        &7Made by grinding polished blackstone; can be sieved.
+        &8Regular blackstone still follows Slimefun's normal gravel recipe.
+  creeper-ward:
+    name: "&aCreeper Ward"
+    lore: |-
+
+      &7When placed, the chunk it is in plus the surrounding ring
+      &7(&f3x3 chunks &7by default) blocks natural creeper spawning.
+      &7Creepers that enter the area are continuously pushed away
+      &7and &ccannot explode &7while protected.
+
+      &7Protection lasts while the block exists and ends when broken.
+  survey-ruler:
+    name: "&bOre Surveyor"
+    lore: |-
+
+      &7Right-click the ground to scan downward using the
+      &fIndustrial Miner &7mining area (&f7x7&7), listing
+      &7mineable ore types and quantities.
+
+      &7Sneak + Left-click: switch display (&fChat &7/ &fInventory GUI&7)
+
+      &7Cooldown: &f5 seconds
+  advanced-survey-ruler:
+    name: "&bAdvanced Ore Surveyor"
+    lore: |-
+
+      &7Right-click the ground to scan downward using the
+      &fcurrently selected survey area&7, listing mineable ores.
+
+      &7Sneak + Right-click air: switch between the
+      &fAdvanced Industrial Miner &7(&f11x11&7) and
+      &fIndustrial Miner &7(&f7x7&7) scan sizes.
+
+      &7Sneak + Left-click: switch display (&fChat &7/ &fInventory GUI&7)
+
+      &7Cooldown: &f5 seconds
+  engineer-goggles:
+    name: "&bEngineer Goggles"
+    lore: |-
+
+      &7Wear in the helmet slot to display nearby &fSlimefun blocks
+      &7and multiblock structures with available energy information.
+
+      &7Display radius: &f{radius} blocks
+      &8Holograms are private and do not block interaction.
+
+      &7Sneak + Left-click while held: &fOpen display filters
+      &7Sneak + Right-click a machine: &fToggle that item type
+      &7Filter menu mode: &fNearby / Aimed Target
+  engineer-night-vision-goggles:
+    name: "&aEngineer Night Vision Goggles"
+    lore: |-
+
+      &7Combines &fNight Vision Goggles &7with &fEngineer Goggles&7.
+      &7Provides permanent night vision while worn and displays
+      &7nearby machine diagnostics.
+
+      &7Display radius: &f{radius} blocks
+      &8Private holograms do not block clicks and cannot be seen by others.
+
+      &7Sneak + Left-click while held: &fOpen display filters
+      &7Sneak + Right-click a machine: &fToggle that item type
+      &7Filter menu mode: &fNearby / Aimed Target
+  butcher:
+    name: "&cButcher Machine"
+    lore: |-
+
+      &7Automatically attacks non-player mobs in a
+      &f3x3 area in front of the machine &7(area sweep).
+
+      &7Right-click to open the menu:
+      &7- &f7 weapons&7: first weapon has priority; switches when broken
+      &7- &fEnchanted books&7: Looting / Sharpness / Fire Aspect apply
+      &7- &fFood&7: converted into attacks (15 attacks per nutrition point,
+      &7  internal maximum of 100 nutrition)
+      &7- &fUpgrade slots&7: range / damage components (up to level 5)
+
+      &7All items can be supplied through &fCargo &7or &fhoppers&7.
+      &7Kills drop normal loot and XP; the machine will not operate
+      &7inside territory where its owner lacks permission.
+  butcher-range-upgrade:
+    name: "&dButcher - Range Upgrade"
+    lore: |-
+
+      &7Place in the Butcher Machine's range upgrade slot.
+      &7Each upgrade: attack width/height &f+2 blocks&7,
+      &7attack depth &f+1 block&7.
+      &7(3x3 -> 5x5 -> 7x7 ... based on stack size)
+  butcher-damage-upgrade:
+    name: "&cButcher - Damage Upgrade"
+    lore: |-
+
+      &7Place in the Butcher Machine's damage upgrade slot.
+      &7Each upgrade adds &f+50% base damage&7.
+      &7(x1.5 -> x2.0 -> x2.5 ... based on stack size)
+  auto-clicker:
+    name: "&6Auto Clicker"
+    lore: |-
+
+      &7Uses a fake player to repeatedly &fleft / right click &7the block
+      &7directly in front of the machine.
+
+      &cRequires redstone power&7: powered = running, unpowered = stopped.
+      &7Right-click to place &fone held item&7 used by the fake player
+      &7(e.g. bone meal / buckets / seeds); consumed items are written back.
+      &7The slot can be refilled by an &fadjacent hopper &7or Cargo.
+      &7Install an &fExtraction Upgrade &7to refill from adjacent containers
+      &7with blacklist / whitelist filtering.
+
+      &7Supports &fSlimefun block interaction &7and can
+      &fbypass research unlock checks &7for machine interaction.
+      &8Default rate is about once per second.
+  growth-inhibitor:
+    name: "&aGrowth Inhibitor"
+    lore: |-
+
+      &7Right-click a &fbaby mob &7to lock its age,
+      &7keeping it &fyoung permanently&7.
+
+      &7Right-click an &falready locked &7mob again to unlock it
+      &7and resume normal growth.
+      &8(Only works on breedable mobs such as animals and villagers.)
+  combat-harness:
+    tier-1:
+      name: "&bCombat Harness I"
+      lore: |-
+
+        &7Right-click a &fHappy Ghast &7to equip it.
+        &7While worn, the Happy Ghast uses a &bGuardian beam &7to attack
+        &7hostile mobs in &fline of sight &7(&ccannot shoot through blocks&7).
+
+        &7Each beam deals &c{damage} damage &7as &dmagic damage,
+        &7ignoring armor.
+    tier-2:
+      name: "&aCombat Harness II"
+      lore: |-
+
+        &7Right-click a &fHappy Ghast &7to equip it.
+        &7While worn, the Happy Ghast uses a &bGuardian beam &7to attack
+        &7hostile mobs in &fline of sight &7(&ccannot shoot through blocks&7).
+
+        &7Each beam deals &c{damage} damage &7as &dmagic damage,
+        &7ignoring armor.
+    tier-3:
+      name: "&6Combat Harness III"
+      lore: |-
+
+        &7Right-click a &fHappy Ghast &7to equip it.
+        &7While worn, the Happy Ghast uses a &bGuardian beam &7to attack
+        &7hostile mobs in &fline of sight &7(&ccannot shoot through blocks&7).
+
+        &7Each beam deals &c{damage} damage &7as &dmagic damage,
+        &7ignoring armor.
+    tier-4:
+      name: "&cCombat Harness IV"
+      lore: |-
+
+        &7Right-click a &fHappy Ghast &7to equip it.
+        &7While worn, the Happy Ghast uses a &bGuardian beam &7to attack
+        &7hostile mobs in &fline of sight &7(&ccannot shoot through blocks&7).
+
+        &7Each beam deals &c{damage} damage &7as &dmagic damage,
+        &7ignoring armor.
+  quarry:
+    name: "&bQuarry"
+    lore: |-
+
+      &7Observer-based machine. If the &fcobblestone in front &7is
+      &7adjacent to both &clava &7and &9water &7(they need not be sources),
+      &7the Quarry continuously generates material without breaking it.
+
+      &7The Quarry has &fno internal output inventory&7; products are sent
+      &7directly to nearby &fcontainers / drawers / paged boxes&7.
+
+      &7Right-click to install &fEfficiency Upgrades I-V&7.
+      &7An empty slot uses the base rate; each tier increases output.
+      &7Install a &cNetherrack&7, &eEnd Stone&7, or &8Blackstone Upgrade
+      &7to change the generated material.
+  quarry-efficiency:
+    tier-1:
+      name: "&fQuarry Efficiency Upgrade I"
+      lore: |-
+
+        &7Place in the Quarry's &fEfficiency Upgrade slot&7.
+        &7Production rate depends on tier and server configuration.
+        &8(Stack size does not increase the tier.)
+    tier-2:
+      name: "&aQuarry Efficiency Upgrade II"
+      lore: |-
+
+        &7Place in the Quarry's &fEfficiency Upgrade slot&7.
+        &7Production rate depends on tier and server configuration.
+        &8(Stack size does not increase the tier.)
+    tier-3:
+      name: "&eQuarry Efficiency Upgrade III"
+      lore: |-
+
+        &7Place in the Quarry's &fEfficiency Upgrade slot&7.
+        &7Production rate depends on tier and server configuration.
+        &8(Stack size does not increase the tier.)
+    tier-4:
+      name: "&bQuarry Efficiency Upgrade IV"
+      lore: |-
+
+        &7Place in the Quarry's &fEfficiency Upgrade slot&7.
+        &7Production rate depends on tier and server configuration.
+        &8(Stack size does not increase the tier.)
+    tier-5:
+      name: "&6Quarry Efficiency Upgrade V"
+      lore: |-
+
+        &7Place in the Quarry's &fEfficiency Upgrade slot&7.
+        &7Production rate depends on tier and server configuration.
+        &8(Stack size does not increase the tier.)
+  quarry-output:
+    netherrack:
+      name: "&cQuarry Netherrack Upgrade"
+      lore: |-
+
+        &7Place in the Quarry's &fOutput Upgrade slot&7.
+        &7Changes Quarry output from cobblestone to &cnetherrack&7.
+        &8The cobblestone/lava/water structure remains unchanged.
+    end-stone:
+      name: "&eQuarry End Stone Upgrade"
+      lore: |-
+
+        &7Place in the Quarry's &fOutput Upgrade slot&7.
+        &7Changes Quarry output from cobblestone to &eend stone&7.
+        &8The cobblestone/lava/water structure remains unchanged.
+    blackstone:
+      name: "&8Quarry Blackstone Upgrade"
+      lore: |-
+
+        &7Place in the Quarry's &fOutput Upgrade slot&7.
+        &7Changes Quarry output from cobblestone to &8blackstone&7.
+        &8More expensive to craft; the generation structure is unchanged.
+  storage:
+    drawer:
+      name: "&eMass Storage Drawer"
+      lore: |-
+
+        &7Stores a &fsingle item type &7in quantities far beyond vanilla stacks.
+      
+        &7An invisible display on the front shows the item.
+        &7Aim at it to see the stored amount.
+
+        &7Right-click display: store held stack; &fdouble-click &7stores all matching items.
+        &7Left-click display: withdraw one; &fShift + Left-click &7withdraws a stack.
+        &fRight-click the barrel &7to open controls and upgrades.
+
+        &7Compatible with Slimefun Cargo.
+    paged-box:
+      name: "&6Paged Storage Box"
+      lore: |-
+
+        &7Stores &fmultiple item types &7(one type per slot/page entry)
+        &7with quantities far beyond vanilla stack limits.
+
+        &7Right-click to open the paged inventory. Click stored items to
+        &7withdraw and click player inventory items to deposit.
+        &7Upgrades are managed from the same GUI.
+
+        &7Compatible with Slimefun Cargo.
+    disk-manager:
+      name: "&dDisk Manager"
+      lore: |-
+
+        &7Uses the six vanilla chiseled-bookshelf slots to install
+        &7Item Storage Disks, which are displayed directly in the block.
+
+        &7Right-click to view disk status and install/remove disks.
+        &7When connected to a Storage Network, disk contents can be
+        &7accessed through the network terminal.
+    disks:
+      1k:
+        name: "&f1K Item Storage Disk"
+        lore: |-
+          &7Capacity: &f1,024 bytes
+          &7Maximum item types: &f64
+      4k:
+        name: "&a4K Item Storage Disk"
+        lore: |-
+          &7Capacity: &f4,096 bytes
+          &7Maximum item types: &f64
+      16k:
+        name: "&b16K Item Storage Disk"
+        lore: |-
+          &7Capacity: &f16,384 bytes
+          &7Maximum item types: &f64
+      64k:
+        name: "&d64K Item Storage Disk"
+        lore: |-
+          &7Capacity: &f65,536 bytes
+          &7Maximum item types: &f64
+      128k:
+        name: "&6128K Item Storage Disk"
+        lore: |-
+          &7Capacity: &f131,072 bytes
+          &7Maximum item types: &f64
+      256k:
+        name: "&c256K Item Storage Disk"
+        lore: |-
+          &7Capacity: &f262,144 bytes
+          &7Maximum item types: &f64
+      status-lore: |-
+        &7Item types: &f{types}&7/{maxTypes}
+        &7Total items: &f{items}
+        &7Bytes used: &f{used}&7/{capacity}
+
+        &8Non-empty disks cannot be stored inside another disk.
+    network:
+      controller:
+        name: "&bNetwork Controller"
+        lore: |-
+
+          &7The brain and access point of a Storage Network.
+          &7Right-click to open the &fNetwork Terminal&7 and access
+          &7all connected drawers, storage boxes, and disks.
+
+          &7Each tick it routes input/output ports and bridges Cargo.
+          &7Network radius is controlled by server configuration.
+      connector:
+        name: "&7Network Connector"
+        lore: |-
+
+          &7Network cable used to connect controllers, storage blocks,
+          &7and ports. Adjacent placement connects automatically.
+      input-port:
+        name: "&aNetwork Input Port"
+        lore: |-
+
+          &7Items inserted by Cargo or players are &fdistributed into
+          &7the network &7according to member priority.
+
+          &7Must be connected to a network containing a controller.
+      output-port:
+        name: "&cNetwork Output Port"
+        lore: |-
+
+          &7Provides network items for players or Cargo to withdraw.
+
+          &7Must be connected to a network containing a controller.
+    remote-terminal:
+      name: "&dRemote Terminal"
+      lore: |-
+
+        &7Right-click a &fNetwork Controller &7while holding this item to bind it.
+        &7Right-click anywhere to remotely open the selected network terminal.
+        &7Use the button left of Next Page to cycle bound controllers.
+        &7Shift + Right-click to manage all bindings.
+
+        &7Binding data is stored on the item itself.
+    upgrades:
+      stack-1:
+        name: "&fStack Upgrade I"
+        lore: |-
+
+          &7Per-slot capacity &fx4
+
+          &8[Storage Upgrade Component]
+      stack-2:
+        name: "&eStack Upgrade II"
+        lore: |-
+
+          &7Per-slot capacity &fx16
+
+          &8[Storage Upgrade Component]
+      stack-3:
+        name: "&6Stack Upgrade III"
+        lore: |-
+
+          &7Per-slot capacity &fx64
+
+          &8[Storage Upgrade Component]
+      experience:
+        name: "&aExperience Storage Upgrade"
+        lore: |-
+
+          &7Converts a drawer/box into &fexperience storage&7
+          &7and disables item Cargo for that container.
+
+          &8[Storage Upgrade Component]
+      magnet:
+        name: "&bMagnet Upgrade"
+        lore: |-
+
+          &7Pulls nearby dropped items / experience orbs into the container.
+
+          &8[Storage Upgrade Component]
+      void:
+        name: "&8Void Upgrade"
+        lore: |-
+
+          &7Items matching the void list are capped at the configured
+          &fkeep amount&7; excess items are &cdestroyed &7before storage.
+          &7Configure the list and keep amount in the upgrade GUI.
+
+          &8[Storage Upgrade Component]
+      page:
+        name: "&dPage Expansion"
+        lore: |-
+
+          &7Adds &f1 page &7to a &fPaged Storage Box&7.
+          &7Can be stacked up to the configured maximum.
+          &8(Does not work on drawers.)
+
+          &8[Storage Upgrade Component]
+      wise:
+        name: "&aWise Upgrade"
+        lore: |-
+
+          &7When an experience container absorbs XP,
+          &7there is a &f20% &7chance to double that XP.
+          &8(Requires Experience + Magnet upgrades.)
+
+          &8[Storage Upgrade Component]
+      ender-wise:
+        name: "&5Ender Wise Upgrade"
+        lore: |-
+
+          &7When an experience container absorbs XP,
+          &7there is a &f50% &7chance to double that XP.
+          &7Can stack with Wise Upgrade as an independent roll.
+          &8(Requires Experience + Magnet upgrades.)
+
+          &8[Storage Upgrade Component]
+      extract:
+        name: "&eExtraction Upgrade"
+        lore: |-
+
+          &7When installed in a container or Auto Clicker, actively pulls
+          &7items from adjacent hoppers, chests, and SlimeEasy storage.
+          &7Configure blacklist / whitelist rules and enabled faces in the GUI.
+          &8(Disabled while the container is in experience mode.)
+
+          &8[Storage Upgrade Component]
+      remote:
+        name: "&dRemote Upgrade"
+        lore: |-
+
+          &7Right-click a Network Controller while holding this upgrade
+          &7to &fselect a target&7, then install it in a drawer/box.
+          &7The storage block will &fremotely join &7that controller's network
+          &7without requiring physical adjacency.
+
+          &8[Storage Upgrade Component]
+      output:
+        name: "&eItem Output Upgrade"
+        lore: |-
+
+          &7Actively pushes stored items into adjacent containers each tick.
+          &7Configure blacklist / whitelist rules and enabled faces in the GUI.
+          &8(Disabled while the container is in experience mode.)
+
+          &8[Storage Upgrade Component]
+      compression:
+        name: "&6Compression Upgrade"
+        lore: |-
+
+          &7Only works in a &fPaged Storage Box&7.
+          &7Automatically applies matching &f2x2 &7compression recipes
+          &7when stored quantities change.
+          &7Includes a &f17-slot &7blacklist / whitelist filter.
+
+          &8[Storage Upgrade Component]
+      advanced-compression:
+        name: "&cAdvanced Compression Upgrade"
+        lore: |-
+
+          &7Only works in a &fPaged Storage Box&7.
+          &7Supports both &f2x2 and 3x3 &7compression recipes
+          &7with a &f17-slot &7blacklist / whitelist filter.
+          &7Can optionally allow irreversible recipes.
+
+          &8[Storage Upgrade Component]
+  villager:
+    zombie-signal:
+      name: "&2Zombie Signal"
+      lore: |-
+
+        &7A zombie-attracting signal crafted from rotten flesh and iron.
+        &7Required catalyst for the Capsule Iron Farm; not consumed.
+    catcher:
+      name: "&aVillager Catcher"
+      lore: |-
+
+        &7Right-click a living villager to &fcapture it &7while preserving
+        &7all of its attributes.
+        &7Sneak + Right-click to &frelease &7the stored villager.
+
+        &7An empty catcher is also used to craft villager machines.
+    trader:
+      name: "&bVillager Trader"
+      lore: |-
+
+        &7Transparent container with a miniature villager display.
+
+        &7Right-click an empty block: insert a &fvillager (filled catcher)
+        &7or &fworkstation block&7.
+        &7Right-click with a villager installed: &fopen trading directly&7.
+        &7Sneak + Right-click: &fremove &7the villager or workstation.
+
+        &7If the villager profession matches its workstation, trades
+        &7are &fautomatically restocked &7at the configured interval.
+    iron-farm:
+      name: "&fCapsule Iron Farm"
+      lore: |-
+
+        &7Transparent container displaying villagers and a zombie;
+        &7an iron golem briefly appears when iron is produced.
+
+        &7Right-click and supply:
+        &7- &fVillager (filled catcher)&7 - &fZombie Signal&7 - &fFood&7 - &fSpeed Upgrade&7
+        &7With villager + signal + food present, iron is produced on a timer.
+        &7Each cycle consumes food; Speed Upgrades shorten the interval.
+    iron-farm-speed-upgrade:
+      name: "&eIron Farm - Speed Upgrade"
+      lore: |-
+
+        &7Place in the Capsule Iron Farm's speed upgrade slot.
+        &7Stack size = level; higher levels shorten the production interval.
+    school:
+      name: "&6Villager School"
+      lore: |-
+
+        &7Insert a &fNitwit Villager (filled catcher)&7.
+        &7After the configured time it becomes an &funemployed villager
+        &7that can take a profession; the result goes to the output slot.
+    healer:
+      name: "&6Villager Healer"
+      lore: |-
+
+        &7Insert a &fZombie Villager (filled catcher) &7and a
+        &fregular Golden Apple&7. After the configured time, the villager
+        &7is cured while retaining its profession. One apple is consumed.
+    forgetting-potion:
+      name: "&dPotion of Forgetting"
+      lore: |-
+
+        &7Right-click a living villager to make it &fforget its profession&7
+        &7and become an unemployed villager that can take a new job.
+        &7Consumes one potion per use.
+    filled-catcher:
+      name: "Villager Catcher - {villager}"
+      profession-lore: "&7Profession: &f{profession}"
+      trade-lore: "&7Level: &f{level}  &7Trades: &f{trades}"
+      release-lore: "&7Sneak + Right-click to release this villager"
+  territory-core:
+    name: "&6Territory Core"
+    lore: |-
+
+      &7Claims a 3x3 chunk area centered on the core when placed.
+      &7Each player may own one territory.
+      &7Right-click to open territory management.
+  territory-flag:
+    name: "&fTerritory Flag"
+    lore: |-
+
+      &7Claims a 3x3 chunk area centered on the flag.
+      &7Coverage from flags in the same territory may overlap.
+      &7Hold a flag to display nearby claimed borders.
+      &7Maximum: 35 flags per territory.
+
+groups:
+  utility-machines:
+    name: "&bUtility Machines"
+    lore: |-
+
+      &7Useful automation machines and devices
+  utility-tools:
+    name: "&bUtility Tools"
+    lore: |-
+
+      &7Useful handheld tools and utilities
+  storage:
+    name: "&bStorage System"
+    lore: |-
+
+      &7High-capacity drawers, paged boxes, disks, and storage networks
+  villager:
+    name: "&bSimple Villagers"
+    lore: |-
+
+      &7Work with villagers without needing to protect physical villagers
+  territory:
+    name: "&6Simple Territory"
+    lore: |-
+
+      &7Chunk claims, member permissions, and Slimefun protection integration
+
+menus:
+  territory:
+    title: "&6Simple Territory"
+    member-title: "&6Territory Members"
+    invite-list-title: "&6Invite Online Player"
+    invite-confirm-title: "&6Confirm Invite - &f{player}"
+    permission-title: "&6Member Permissions - &f{player}"
+    remove-title: "&cConfirm Removal - &f{player}"
+    visitor-title: "&6Visitor Permissions"
+    default-title: "&6Default Member Permissions"
+    settings-title: "&6Territory Settings"
+    chunk-title: "&6Territory Chunks"
+    flag-editor-title: "&6Flag Editor"
+    disband-title: "&cConfirm Territory Disband"
+    overview:
+      name: "&6Territory Overview"
+      lore: |-
+        &7Owner: &f{owner}
+        &7Claimed chunks: &f{chunks}
+        &7Flags: &f{flags}/{maxFlags}
+    members:
+      name: "&eMember Management"
+      lore: |-
+        &7View members and manage per-member action permissions
+    my-permissions:
+      name: "&eMy Territory Permissions"
+      lore: |-
+        &7View your current action and management permissions
+    no-members:
+      name: "&7No Members"
+      lore: |-
+        &7Invite an online player to join this territory
+    visitors:
+      name: "&eVisitor Permissions"
+      lore: |-
+        &7Configure actions available to non-members
+    default-permissions:
+      name: "&eDefault Member Permissions"
+      lore: |-
+        &7Action permissions: &f{actions}/6
+        &7Management permissions: &f{management}/{managementMax}
+        &8Only affects members who join later
+    settings:
+      name: "&eTerritory Settings"
+      lore: |-
+        &7Configure visitor entry and existing flight abilities
+    chunks:
+      name: "&eChunk Management"
+      lore: |-
+        &7Current chunk count: &f{count}
+    flag-editor:
+      name: "&eFlag Editor"
+      lore: |-
+        &7Current pattern layers: &f{patterns}
+        &7Updates all flags belonging to this territory
+    flag-preview:
+      name: "&fCurrent Territory Flag"
+      lore: |-
+        &7Pattern layers: &f{patterns}
+        &8Preview includes base color and every pattern layer
+        &aClick a banner in your inventory to import its appearance
+        &8The template banner is not moved or consumed
+    flag-clear:
+      name: "&cClear Flag Pattern"
+      lore: |-
+        &7Reset all territory flags to a blank white banner
+    transfer:
+      name: "&dTransfer Territory"
+      lore: |-
+        &7Transfer ownership to an online member
+        &cThe target cannot already own a territory
+    disband:
+      name: "&cDisband Territory"
+      lore: |-
+        &7Release all claimed chunks
+        &cThis action cannot be undone
+    add-member:
+      name: "&aInvite Member"
+      lore: |-
+        &7Open the online player list
+        &7Select a player and confirm the invitation
+    no-invite-candidates:
+      name: "&7No Eligible Players"
+      lore: |-
+        &7All online players are already members, hidden, or ineligible
+    invite-player:
+      name: "&f{player}"
+      lore: |-
+        &7Click to select this online player
+    invite-selected:
+      name: "&f{player}"
+      lore: |-
+        &7This player is selected
+        &7Click the confirmation button below to send the invite
+    invite-confirm:
+      name: "&aSend Territory Invite"
+      lore: |-
+        &7Target player: &f{player}
+        &7They have 5 minutes to accept or decline
+        &eClick to confirm
+    back:
+      name: "&fBack"
+      lore: |-
+        &7Return to the previous menu
+    member-summary: "&7Action permissions: &f{actions}/6  &7Management: &f{management}/{managementMax}"
+    permission:
+      name: "&e{permission}"
+      lore: |-
+        &7Current state: {state}
+        &7Click to toggle
+    permission-readonly:
+      name: "&e{permission}"
+      lore: |-
+        &7Current state: {state}
+        &8View only
+    management:
+      name: "&b{permission}"
+      lore: |-
+        &7Current state: {state}
+        &7Only the territory owner may toggle this
+    management-readonly:
+      name: "&b{permission}"
+      lore: |-
+        &7Current state: {state}
+        &8View only
+    remove-member:
+      name: "&cRemove Member"
+      lore: |-
+        &7Open a confirmation menu to remove this member
+    remove-confirm:
+      name: "&cConfirm Removal: {player}"
+      lore: |-
+        &7Immediately revoke all territory permissions
+        &cIf visitors cannot enter, the player will be moved outside
+    setting:
+      name: "&e{setting}"
+      lore: |-
+        &7Current state: {state}
+        &7Click to toggle
+    chunk:
+      name: "&fChunk {x}, {z}"
+      lore: |-
+        &7The core and every flag claim must remain connected
+    expansion-mode:
+      name: "&aSelect This Territory for Expansion"
+      lore: |-
+        &7The next Territory Flag placed within 60 seconds
+        &7will be explicitly assigned to this territory
+    disband-confirm:
+      name: "&cConfirm Permanent Disband"
+      lore: |-
+        &7Release all chunks and remove member permissions
+        &cClick to execute immediately
+  butcher:
+    labels:
+      weapon:
+        name: "&eWeapons (row below)"
+        lore: |-
+          &7Insert up to 7 weapons
+          &7First weapon has priority; switches when durability reaches zero
+      enchantment-book:
+        name: "&dEnchanted Book ->"
+        lore: |-
+          &7Insert an enchanted book
+          &7Looting / Sharpness / Fire Aspect apply
+      food:
+        name: "&6Food ->"
+        lore: |-
+          &7Insert food
+          &7Each 1 nutrition = 15 attacks
+          &7Internal maximum = 100 nutrition
+      range-upgrade:
+        name: "&bRange Upgrade ->"
+        lore: |-
+          &7Stack size = level (maximum 5)
+          &7Each level: attack width/height +2, depth +1
+      damage-upgrade:
+        name: "&cDamage Upgrade ->"
+        lore: |-
+          &7Stack size = level (maximum 5)
+          &7Each level adds +50% base damage
+    info-template:
+      name: "&cButcher Machine"
+      lore: |-
+        &7Automatically attacks non-player mobs in front of the machine.
+
+        &7Right-click to insert weapons / enchanted books / food / upgrades.
+        &7Food can also be supplied by hoppers or Cargo.
+    info:
+      name: "&cButcher Machine"
+      lore: |-
+        &7Current weapon: &f{weapon}
+        &7Stored nutrition: &f{satiety}&7/&f{maxSatiety} &7(&f{attacks} attacks&7)
+        &7Attack area: &f{span}x{span} &7(Range level &f{rangeLevel}&7)
+        &7Damage multiplier: &fx{damageMultiplier} &7(Damage level &f{damageLevel}&7)
+
+        &7Weapons: up to 7 in the row below
+        &7Enchanted book: Looting / Sharpness / Fire Aspect
+        &7Food: 15 attacks per nutrition point
+        &7Upgrade slots: Range / Damage (maximum level 5)
+        &7All items support hoppers or Cargo input
+  auto-clicker:
+    held-item:
+      name: "&bHeld Item ↓"
+      lore: |-
+        &7Item held by the fake player while clicking
+        &7(e.g. bone meal / bucket / seeds; hopper refill supported)
+    upgrade-title: "&9Clicker Upgrades"
+    interval:
+      decrease:
+        name: "&c- Decrease Interval"
+        lore: |-
+          &7Click: -{coarseStep} tick
+          &7Shift-click: -{fineStep} tick
+      info:
+        name: "&eClick Interval: &f{interval} tick"
+        lore: |-
+          &7About &f{seconds} &7seconds per click
+          &7Intervals below 1 tick perform multiple clicks per tick
+          &7Range: {min}-{max}
+      increase:
+        name: "&a+ Increase Interval"
+        lore: |-
+          &7Click: +{coarseStep} tick
+          &7Shift-click: +{fineStep} tick
+    toggle:
+      enabled:
+        name: "&a{mode}: Enabled"
+        lore: |-
+          &7Click to disable
+      disabled:
+        name: "&7{mode}: Disabled"
+        lore: |-
+          &7Click to enable
+  quarry:
+    labels:
+      efficiency-upgrade:
+        name: "&eEfficiency Upgrade ->"
+        lore: |-
+          &7Insert &fQuarry Efficiency Upgrade I-V&7.
+          &7Actual output depends on server configuration;
+          &7the current rate is shown in the status panel above.
+      output-upgrade:
+        name: "&6Output Upgrade ->"
+        lore: |-
+          &7Insert a &cNetherrack&7, &eEnd Stone&7, or &8Blackstone Upgrade&7.
+          &7An empty slot produces &fcobblestone&7.
+    rate:
+      upgraded: "&f{amount} &7items/0.5s (Efficiency &f{tier}&7)"
+      base: "&f{amount} &7items/{ticks} tick (no upgrade)"
+    status:
+      no-cobblestone: "&cNo cobblestone in front"
+      missing-fluids: "&cCobblestone is not adjacent to both lava and water"
+      running: "&aRunning"
+    info:
+      name: "&bQuarry"
+      lore: |-
+        &7Status: {status}
+        &7Rate: {rate}
+        &7Output: &f{output}
+
+        &7The &fcobblestone in front &7must touch both &clava &7and &9water&7.
+        &7When valid, the Quarry continuously generates material without
+        &7breaking the cobblestone. Output is sent to nearby containers.
+    info-template:
+      name: "&bQuarry"
+      lore: |-
+        &7Point the observer face at &fcobblestone &7that touches both
+        &clava &7and &9water&7 to generate material.
+        &7Output upgrades can change the result from cobblestone to
+        &cnetherrack&7, &eend stone&7, or &8blackstone&7.
+        &7Products are sent to nearby containers / drawers / paged boxes.
+  paged-box:
+    title: "&9Paged Storage Box"
+    page:
+      name: "&ePage {page}/{pages}"
+      lore: []
+    upgrade-title: "&9Storage Box Upgrades"
+  disk-manager:
+    title: "&5Disk Manager"
+    empty-slot:
+      name: "&7Disk Slot #{slot}"
+      lore: |-
+        &7Pick up a disk with the cursor and click to install it
+    status:
+      name: "&dDisk Array Status"
+      lore: |-
+        &7Installed: &f{disks}&7/{maxDisks}
+        &7Item types: &f{types}
+        &7Total items: &f{items}
+        &7Bytes used: &f{used}&7/{capacity}
+
+        &8Click a disk with an empty cursor to remove it
+  network-port:
+    input-title: "&9Network Input Port"
+    output-title: "&9Network Output Port"
+    status:
+      name: "&bPort Status"
+      lore: |-
+        &7Role: &f{role}
+        &7Mode: &f{mode}
+        &7Network: {network}
+        &7Slimefun Cargo: {cargo}
+        &7Active adjacent I/O: {active}
+
+        &8Buffer slots are always available for manual use
+    mode:
+      name: "&eOperating Mode: &f{mode}"
+      lore: |-
+        &7Click to cycle operating mode
+        &8Current buffered items are safely settled before switching
+  filter:
+    marker:
+      name: "&eFilter Item"
+      lore: |-
+        &7Click with an item on the cursor or click an inventory item
+        &7to add/remove it from the filter
+    listed-item-lore: |-
+      &8Click to remove from the filter
+    face:
+      enabled:
+        name: "&a{face} Face: Enabled"
+        lore: |-
+          &8Click to disable
+      disabled:
+        name: "&7{face} Face: Disabled"
+        lore: |-
+          &8Click to enable
+    mode:
+      blacklist:
+        name: "&cBlacklist Mode"
+        lore: |-
+          &7Listed items are &cblocked&7; all others are allowed
+          &8Click to switch to whitelist
+      whitelist:
+        name: "&aWhitelist Mode"
+        lore: |-
+          &7Only listed items are allowed; all others are blocked
+          &8Click to switch to blacklist
+  common:
+    upgrade-placeholder:
+      name: "&aInstall Upgrade Component"
+      lore: |-
+        &7Hold or click an upgrade component in your inventory to install it
+    void-config:
+      name: "&8Void Filter Settings"
+      lore: |-
+        &7Click to manage the destruction list
+    extract-config:
+      name: "&eExtraction Filter Settings"
+      lore: |-
+        &7Click to manage extraction blacklist / whitelist
+    output-config:
+      name: "&eOutput Filter Settings"
+      lore: |-
+        &7Click to manage output blacklist / whitelist
+    compression-config:
+      name: "&6Compression Settings"
+      lore: |-
+        &7Click to manage the 17-slot blacklist / whitelist
+        &7and whether irreversible recipes are allowed
+    previous-page:
+      name: "&ePrevious Page"
+      lore: []
+    next-page:
+      name: "&eNext Page"
+      lore: []
+    upgrade-entry:
+      name: "&bUpgrades"
+      lore: |-
+        &7Click to manage upgrade components
+  upgrades:
+    extract-title: "&8Extraction Settings"
+    output-title: "&8Output Settings"
+  compression:
+    title: "&8Compression Settings"
+    marker:
+      name: "&eFilter Item"
+      lore: |-
+        &7Click with an item on the cursor or click an inventory item
+        &7to add/remove it from the compression filter
+    irreversible:
+      enabled:
+        name: "&aIrreversible Recipes Allowed"
+        lore: |-
+          &7Recipes that cannot be decompressed are currently allowed
+          &7Click to disable
+      disabled:
+        name: "&cSkip Irreversible Recipes"
+        lore: |-
+          &7Only recipes that can be decompressed are currently processed
+          &7Click to allow irreversible recipes
+  drawer:
+    title: "&9Storage Drawer"
+    empty:
+      name: "&7Drawer Empty"
+      lore: |-
+        &7Right-click the display on the front to insert an item
+    item:
+      lore: |-
+        &7Amount: &e{count} &7/ &f{capacity}
+        &7Left-click: withdraw stack / Right-click: withdraw one
+    upgrade-title: "&9Drawer Upgrades"
+  experience:
+    title: "&9Experience Storage"
+    stored:
+      name: "&aStored Experience"
+      lore: |-
+        &7Points: &f{points}
+        &7Approximate levels: &f{levels}
+    deposit-all:
+      name: "&aDeposit All Experience"
+      lore: |-
+        &7Click to store all of your current experience
+    withdraw-mode:
+      direct:
+        name: "&bWithdrawal Mode: &aDirect"
+        lore: |-
+          &7Withdrawn XP is added directly to the player's XP bar
+          &eClick to switch to experience orbs
+      orbs:
+        name: "&bWithdrawal Mode: &eExperience Orbs"
+        lore: |-
+          &7Withdrawn XP spawns as orbs near the player
+          &eClick to switch to direct XP
+    upgrade-title: "&9Storage Upgrades"
+    withdraw:
+      name: "&eWithdraw {levels} Levels"
+      lore: |-
+        &7Calculates points from your current level
+        &7and withdraws all remaining XP if storage is insufficient
+  void-filter:
+    title: "&8Void Destruction List"
+    marker:
+      name: "&cFilter Item"
+      lore: |-
+        &7Click with an item on the cursor or click an inventory item
+        &7to add/remove it from the destruction list (default keep = &e0&7)
+    listed-item-lore: |-
+      &7Keep: &e{keep} &7items &8(excess is destroyed)
+      &8Left-click +64 / Right-click -64
+      &8Sneak Left-click +1 / Sneak Right-click -1
+      &8Sneak Right-click at 0 to remove
+  network:
+    title: "&9Storage Network Terminal"
+    page-info:
+      name: "&ePage {page}/{pages}"
+      lore: |-
+        &7Members: {members}
+    switch-terminal:
+      name: "&dSwitch Remote Terminal"
+      lore: |-
+        &7Click to switch to the next bound controller
+    search:
+      idle:
+        name: "&bSearch Items"
+        lore: |-
+          &7Left-click and type a keyword in chat
+      active:
+        name: "&bSearch: &f{query}"
+        lore: |-
+          &7Left-click to search again
+          &7Right-click to clear search
+    sort-field:
+      name: "&bSort By: &f{field}"
+      lore: |-
+        &7Click to switch Name / Amount
+    sort-direction:
+      name: "&bOrder: &f{direction}"
+      lore: |-
+        &7Click to switch Ascending / Descending
+  remote-terminal:
+    invalid:
+      name: "&cInvalid Controller"
+      lore: |-
+        &7{location}
+        &8Right-click to remove
+    selected:
+      name: "&aCurrent: {controller}"
+      lore: |-
+        &7Left-click to keep selected
+        &7Right-click to remove binding
+    binding:
+      name: "&d{controller}"
+      lore: |-
+        &7Left-click to set as current terminal
+        &7Right-click to remove binding
+    title: "&5Remote Terminal Management"
+    page-info:
+      name: "&ePage {page}/{pages}"
+      lore: |-
+        &7Bound controllers: {count}
+  villager-healer:
+    labels:
+      input:
+        name: "&6Input ↓"
+        lore: |-
+          &7Insert Zombie Villager (filled catcher)
+      apple:
+        name: "&eGolden Apple ↓"
+        lore: |-
+          &7Insert a regular Golden Apple; one is consumed per cure
+      output:
+        name: "&aOutput ↓"
+        lore: |-
+          &7Cured normal villager
+    info-template:
+      name: "&6Villager Healer"
+      lore: |-
+        &7Insert a Zombie Villager (filled catcher) and regular Golden Apple.
+    info:
+      name: "&6Villager Healer"
+      lore: |-
+        &7{status}
+
+        &7Insert Zombie Villager (filled catcher) + regular Golden Apple.
+        &7When complete, it becomes a normal villager and keeps its profession.
+  iron-farm:
+    labels:
+      villager:
+        name: "&aVillager ↓"
+        lore: |-
+          &7Insert a filled Villager Catcher
+      signal:
+        name: "&2Zombie Signal ↓"
+        lore: |-
+          &7Insert Zombie Signal (catalyst; not consumed)
+      food:
+        name: "&6Food ↓"
+        lore: |-
+          &7Insert food; a small amount is consumed each cycle
+      speed:
+        name: "&eSpeed Upgrade ↓"
+        lore: |-
+          &7Stack size = level; higher levels are faster
+      output:
+        name: "&9Output ↓"
+        lore: |-
+          &7Iron ingot output; Cargo extraction supported
+    info-template:
+      name: "&fCapsule Iron Farm"
+      lore: |-
+        &7Supply Villager + Zombie Signal + Food to produce iron over time.
+    states:
+      running: "&aRunning"
+      stopped: "&cStopped"
+    info:
+      name: "&fCapsule Iron Farm"
+      lore: |-
+        &7State: {state}
+        &7{reason}
+
+        &7Required: &fVillager + Zombie Signal + Food
+        &7Speed Upgrade: &fLevel {speedLevel}
+  villager-school:
+    labels:
+      input:
+        name: "&6Input ↓"
+        lore: |-
+          &7Insert Nitwit Villager (filled catcher)
+      output:
+        name: "&aOutput ↓"
+        lore: |-
+          &7Converted unemployed villager
+    info-template:
+      name: "&6Villager School"
+      lore: |-
+        &7Insert a Nitwit Villager (filled catcher) to begin conversion.
+    info:
+      name: "&6Villager School"
+      lore: |-
+        &7{status}
+
+        &7Insert a Nitwit Villager (filled catcher).
+        &7When complete, it becomes a normal unemployed villager.
+  engineer-goggles:
+    title: "&8Engineer Goggles - Display Filters"
+    tabs:
+      groups:
+        name: "&dSlimefun Categories"
+        lore: |-
+          &7Multi-select by registered ItemGroup category
+      items:
+        name: "&cItem Types"
+        lore: |-
+          &7Manage individual item types selected by Sneak + Right-click
+      addons:
+        name: "&eAddons"
+        lore: |-
+          &7Multi-select by the addon that registered each item
+      functions:
+        name: "&6Machine Types"
+        lore: |-
+          &7Multi-select by publicly detectable machine capabilities
+      states:
+        name: "&aOperating State"
+        lore: |-
+          &7Multi-select by verifiable real-time operating state
+    tab-lore: |-
+      &7Page state: {state}
+    entry-lore: |-
+
+      &7Current: {state}
+      &eClick to toggle visibility
+    addon:
+      name: "&d{addon}"
+      lore: |-
+        &7Addon
+        &7Current: {state}
+        &eClick to toggle visibility
+    functions:
+      multiblock:
+        name: "&eMultiblock Structure"
+        lore: "&7Current: {state}"
+      generator:
+        name: "&eGenerator"
+        lore: "&7Current: {state}"
+      template-machine:
+        name: "&eTemplate Machine"
+        lore: "&7Current: {state}"
+      recipe-machine:
+        name: "&eRecipe Machine"
+        lore: "&7Current: {state}"
+      consumer:
+        name: "&eEnergy Consumer"
+        lore: "&7Current: {state}"
+      capacitor:
+        name: "&eBattery / Capacitor"
+        lore: "&7Current: {state}"
+      connector:
+        name: "&eEnergy Connector"
+        lore: "&7Current: {state}"
+      other:
+        name: "&eOther Slimefun Block"
+        lore: "&7Current: {state}"
+    states:
+      working:
+        name: "&aWorking"
+        lore: "&7Current: {state}"
+      idle:
+        name: "&cIdle"
+        lore: "&7Current: {state}"
+      unknown:
+        name: "&7Unknown State"
+        lore: |-
+          &7Machine does not expose a reliable operating state
+          &7Current: {state}
+    reset:
+      name: "&cReset Filters"
+      lore: |-
+        &7Make all types visible and return to Nearby mode
+    display-mode:
+      nearby:
+        name: "&bNearby Display Mode"
+        lore: |-
+          &7Shows all filtered targets within range
+          &eClick to switch to Aimed Target mode
+
+          &7Categories: &f{groups}/{groupTotal}
+          &7Items: &f{items}/{itemTotal}
+          &7Addons: &f{addons}/{addonTotal}
+          &7Types: &f{functions}/{functionTotal}
+          &7States: &f{states}/{stateTotal}
+          &8Page {page}/{pages}
+      aimed:
+        name: "&eAimed Target Mode"
+        lore: |-
+          &7Only shows the machine or structure under your crosshair
+          &eClick to switch to Nearby mode
+
+          &7Categories: &f{groups}/{groupTotal}
+          &7Items: &f{items}/{itemTotal}
+          &7Addons: &f{addons}/{addonTotal}
+          &7Types: &f{functions}/{functionTotal}
+          &7States: &f{states}/{stateTotal}
+          &8Page {page}/{pages}
+  survey:
+    result:
+      count: "&7Amount: &a{count}"
+      empty: "&8No mineable ores detected"
+
+names:
+  common:
+    none: "None"
+    enabled: "&aEnabled"
+    disabled: "&7Disabled"
+  engineer-goggles:
+    filter:
+      shown: "&aShown"
+      hidden: "&cHidden"
+    tab:
+      active: "&aCurrent Tab"
+      inactive: "&8Click to Switch"
+    work-state:
+      working: "&aWorking"
+      idle: "&cIdle"
+      unknown: "&7Unknown State"
+  network-port-role:
+    input: "Input to Network"
+    output: "Output from Network"
+  port-mode:
+    cargo: "Cargo Mode"
+    active: "Active Mode"
+    both: "Combined Mode"
+  network-status:
+    connected: "&aConnected"
+    disconnected: "&cDisconnected"
+  click-mode:
+    left: "Left Click"
+    right: "Right Click"
+  faces:
+    up: "Up"
+    down: "Down"
+    north: "North"
+    south: "South"
+    east: "East"
+    west: "West"
+  sort-field:
+    name: "Name"
+    amount: "Amount"
+  sort-direction:
+    descending: "Descending ↓"
+    ascending: "Ascending ↑"
+  survey-display:
+    gui: "Inventory GUI"
+    chat: "Chat"
+  villager:
+    zombie-suffix: " - Zombie"
+  materials:
+    coal-ore: "Coal Ore"
+    iron-ore: "Iron Ore"
+    copper-ore: "Copper Ore"
+    gold-ore: "Gold Ore"
+    redstone-ore: "Redstone Ore"
+    emerald-ore: "Emerald Ore"
+    lapis-ore: "Lapis Lazuli Ore"
+    diamond-ore: "Diamond Ore"
+    deepslate-coal-ore: "Deepslate Coal Ore"
+    deepslate-iron-ore: "Deepslate Iron Ore"
+    deepslate-copper-ore: "Deepslate Copper Ore"
+    deepslate-gold-ore: "Deepslate Gold Ore"
+    deepslate-redstone-ore: "Deepslate Redstone Ore"
+    deepslate-emerald-ore: "Deepslate Emerald Ore"
+    deepslate-lapis-ore: "Deepslate Lapis Lazuli Ore"
+    deepslate-diamond-ore: "Deepslate Diamond Ore"
+    nether-quartz-ore: "Nether Quartz Ore"
+    nether-gold-ore: "Nether Gold Ore"
+    gilded-blackstone: "Gilded Blackstone"
+  quarry-output:
+    cobblestone: "Cobblestone"
+    netherrack: "Netherrack"
+    end-stone: "End Stone"
+    blackstone: "Blackstone"
+  survey-tier:
+    industrial-miner: "Industrial Miner"
+    advanced-industrial-miner: "Advanced Industrial Miner"
+  territory:
+    state:
+      enabled: "&aAllowed"
+      disabled: "&cDenied"
+    setting:
+      entry: "Allow Visitor Entry"
+      flight: "Allow Existing Flight Ability"
+    action:
+      break-block: "Break Blocks"
+      place-block: "Place Blocks"
+      interact-block: "Block / Container Interaction"
+      attack-player: "Attack Players"
+      attack-entity: "Attack Entities"
+      interact-entity: "Entity Interaction"
+    management:
+      members: "Member Management"
+      permissions: "Action Permission Management"
+      chunks: "Chunk Management"
+      flags: "Flag Style Management"
+      settings: "Territory Settings"
+
+messages:
+  engineer-goggles:
+    decent-holograms-missing: "&cDecentHolograms is not installed; Engineer Goggles display is unavailable."
+    must-hold: "&cHold the Engineer Goggles in your main hand."
+    not-slimefun-target: "&cSneak + Right-click a Slimefun block or multiblock trigger."
+    item-shown: "&aItem type is now shown: &f{item}"
+    item-hidden: "&cItem type is now hidden: &f{item}"
+  territory:
+    created: "&aTerritory created. The 3x3 area around the core has been claimed."
+    chunk-added: "&aFlag placed. Its 3x3 coverage has been added to the territory."
+    chunk-removed: "&aFlag removed. Chunks no longer covered by another anchor were released."
+    confirm-core-break: "&eBreak this core again to confirm territory disbanding. Confirmation expires in 10 seconds."
+    disbanded: "&aTerritory disbanded. All chunks have been released."
+    action-denied: "&cTerritory permissions do not allow this action."
+    entry-denied: "&cThis territory does not allow visitors to enter."
+    entered: "&aYou entered &f{owner}'s &aterritory."
+    left: "&7You left &f{owner}'s &7territory."
+    switched: "&7You left &f{from}'s &7territory and entered &f{to}'s &7territory."
+    flight-denied: "&cThis territory does not allow existing flight abilities."
+    expansion-selected: "&aTerritory selected. Place a connected 3x3 Territory Flag within 60 seconds."
+    flag-template-required: "&cClick a banner item in your inventory."
+    flags-updated: "&aFlag style saved. Updated &f{updated}/{total} &abound flags."
+    input-transfer: "&eEnter the exact name of the online member who should receive this territory within 60 seconds. Type &fcancel &eto exit."
+    input-cancelled: "&7Input cancelled."
+    input-expired: "&7Player-name input expired. Start the transfer again from the territory menu."
+    player-not-online: "&cThe target player is not online."
+    invite-sent: "&aTerritory invitation sent to {player}."
+    invite: "&e{inviter} invited you to join {owner}'s territory. This invite expires in 5 minutes. "
+    transfer-invite: "&e{owner} wants to transfer their territory to you. Confirm within 5 minutes. "
+    accept-button: "&a[ACCEPT] "
+    deny-button: "&c[DECLINE]"
+    accept-hover: "&aClick to accept"
+    deny-hover: "&cClick to decline"
+    invite-denied: "&7You declined the territory invitation."
+    invite-declined-owner: "&7{player} declined your territory invitation."
+    invite-accepted: "&aYou joined the territory."
+    member-joined: "&a{player} accepted the invitation and joined the territory."
+    invite-not-found: "&cThe invitation does not exist or has expired."
+    transfer-requested: "&aTerritory transfer confirmation sent to {player}."
+    transfer-denied: "&7You declined the territory transfer."
+    transfer-declined-owner: "&7{player} declined the territory transfer."
+    transfer-accepted: "&aYou are now the owner of this territory."
+    transfer-complete: "&aTerritory transferred to {player}."
+    member-removed: "&aRemoved {player} from the territory."
+    you-were-removed: "&cYou were removed from {owner}'s territory."
+    not-found: "&cTerritory not found."
+    admin-info: "&eTerritory {id} &7Owner: &f{owner} &7Chunks: &f{chunks} &7Locked: &f{locked}"
+    admin-transfer-failed: "&cThe target player does not exist or already owns a territory."
+    command-usage: "&eUsage: &f/se territory accept|deny|transfer-accept|transfer-deny <owner>"
+    result:
+      already-owns: "&cYou already own a territory."
+      chunk-occupied: "&cThe target chunk or the flag's 3x3 coverage already belongs to another territory."
+      flag-center-occupied: "&cThis chunk already contains a Territory Flag center."
+      not-adjacent: "&cThe flag's 3x3 coverage must connect to the target territory."
+      ambiguous: "&cThis chunk touches multiple manageable territories. Select expansion mode from the intended territory first."
+      limit-reached: "&cThis territory has reached the 35-flag limit."
+      would-disconnect: "&cRemoving this flag would disconnect the territory's claimed chunks."
+      no-permission: "&cYou do not have the required territory permission."
+      locked: "&cThis territory data is locked. Contact an administrator."
+      not-member: "&cThe target player is not a member of this territory."
+      already-member: "&cThe target player already belongs to this territory."
+      target-already-owns: "&cThe target player already owns a territory."
+      not-found: "&cThis territory no longer exists. Reopen the menu."
+      flag-pattern-limit: "&cToo many banner pattern layers. Maximum: 20."
+      persistence-failed: "&cThe territory change is active in memory but could not be saved yet. The server will retry on a later change or shutdown."
+      persistence-unavailable: "&cTerritory data could not be loaded safely. The feature has been locked to protect the original data; contact an administrator."
+  network-port:
+    buffer-dropped: "&e[Network Port] &7Some buffered items could not be returned and were dropped at the port."
+  disk-manager:
+    clear-cursor: "&cClear your cursor before removing a disk."
+    disk-required: "&cPick up an Item Storage Disk with the cursor first."
+  upgrades:
+    page-limit: "&cMaximum page expansion reached."
+    duplicate: "&cThat upgrade is already installed and cannot be duplicated."
+    insufficient-capacity: "&cToo many items are stored to remove that Stack Upgrade."
+    compression-paged-box-only: "&cCompression Upgrades only work in Paged Storage Boxes."
+  network:
+    search-prompt: "&b[Network Terminal] &7Type a search keyword in chat (type &fcancel &7to cancel):"
+  command:
+    description: "SlimeEasy administration command"
+    usage: "&eUsage: &f/se reload &7or &f/se territory ..."
+    no-permission: "&cYou do not have permission to use this command."
+    reload:
+      success: "&aSlimeEasy configuration and language files reloaded."
+      runtime-applied: "&7Runtime values and subsequently read language text were &aapplied immediately&7."
+      restart-required: "&7Items / categories / research / cached menu text and feature toggles &erequire a server restart&7."
+      failed: "&cConfiguration reload failed: {error}"
+  growth-inhibitor:
+    unlocked: "&a[Growth Inhibitor] &7Age lock removed; this mob will grow normally again."
+    adult-only: "&c[Growth Inhibitor] &7Only baby mobs can be growth-locked."
+    locked: "&a[Growth Inhibitor] &7Growth locked; this baby mob will remain young permanently."
+  survey:
+    display-changed: "&6[Ore Surveyor] &7Display changed to: &f{display}"
+    range-changed: "&6[Ore Surveyor] &7Survey range changed to: &b{tier} &7({size}x{size})"
+    report-header: "&6[Ore Surveyor] &7Estimated ore below &f{x}, {y}, {z}&7:"
+    no-ores: "  &8No mineable ores detected"
+  auto-clicker:
+    unsupported-upgrade: "&cThe Auto Clicker only supports the Extraction Upgrade."
+  paged-box:
+    empty-items-before-experience: "&cRemove all stored items before installing the Experience Storage Upgrade."
+    empty-experience-before-remove: "&cWithdraw all stored experience before removing the Experience Storage Upgrade."
+    page-upgrade-required: "&cToo many item types are stored to remove that Page Expansion."
+    compression-upgrade-conflict: "&cCompression Upgrade and Advanced Compression Upgrade cannot be installed together."
+  drawer:
+    page-upgrade-unsupported: "&cPage Expansion only works in Paged Storage Boxes."
+    empty-items-before-experience: "&cRemove all drawer items before installing the Experience Storage Upgrade."
+    empty-experience-before-remove: "&cWithdraw all stored experience before removing the Experience Storage Upgrade."
+  remote-upgrade:
+    selected: "&d[Remote Upgrade] &7Selected controller &f({x}, {y}, {z})&7. Install this upgrade in a drawer/box upgrade slot."
+    not-selected: "&c[Remote Upgrade] &7Right-click a Network Controller while holding this upgrade before installing it."
+  catcher:
+    already-filled: "&c[Villager Catcher] &7This catcher already contains a villager. Release it first."
+    captured: "&a[Villager Catcher] &7Captured (&f{villager}&7)."
+    released: "&a[Villager Catcher] &7Released villager (&f{villager}&7)."
+  villager-healer:
+    progress: "Curing... &f{seconds}s remaining"
+    completed: "&aCure complete; result moved to output slot"
+    waiting-input: "&7Waiting for Zombie Villager"
+    invalid-input: "&cOnly Zombie Villagers are accepted"
+    missing-apple: "&cMissing regular Golden Apple"
+    output-blocked: "&cClear the output slot first"
+    idle: "&7Idle"
+  iron-farm:
+    producing: "Producing iron..."
+    output-full: "&cOutput is full"
+    produced: "Produced &f{amount}&7 iron ingot(s)"
+    missing-villager: "&cMissing Villager (filled catcher)"
+    missing-signal: "&cMissing Zombie Signal"
+    missing-food: "&cMissing food"
+  forgetting-potion:
+    unsupported: "&c[Potion of Forgetting] &7This server version cannot resolve the unemployed villager type; action cancelled."
+    completed: "&a[Potion of Forgetting] &7The villager forgot its profession and is now unemployed."
+  villager-school:
+    progress: "Converting... &f{seconds}s remaining"
+    completed: "&aConversion complete; result moved to output slot"
+    waiting-input: "&7Waiting for Nitwit Villager"
+    invalid-input: "&cOnly Nitwit Villagers are accepted"
+    output-blocked: "&cClear the output slot first"
+    idle: "&7Idle"
+  trader:
+    removed-villager: "&a[Villager Trader] &7Removed villager (&f{villager}&7)."
+    removed-workstation: "&a[Villager Trader] &7Removed workstation block (&f{workstation}&7)."
+    empty: "&7[Villager Trader] The trader is empty."
+    usage: "&7[Villager Trader] Right-click to insert a &fvillager (filled catcher) &7or &fworkstation block&7."
+    inserted-villager: "&a[Villager Trader] &7Inserted villager (&f{villager}&7)."
+    inserted-workstation: "&a[Villager Trader] &7Inserted workstation (&f{workstation}&7). If it matches the villager, trades restock every &f{seconds}s&7."
+  remote-terminal:
+    binding-limit: "&c[Remote Terminal] &7The binding limit of &f{max} &7has been reached."
+    actions:
+      switched: "switched to"
+      bound: "bound"
+    bound: "&b[Remote Terminal] &7{action} Network Controller &f({x}, {y}, {z}) &8[{count} total]"
+    not-bound: "&c[Remote Terminal] &7No controller is bound. Right-click a Network Controller while holding this item."
+    missing-controller: "&c[Remote Terminal] &7The selected Network Controller no longer exists. Sneak + Right-click to manage bindings."
+    no-other-binding: "&e[Remote Terminal] &7No other bound controllers."
+    switched: "&b[Remote Terminal] &7Switched to &f{controller}"
+    no-accessible-binding: "&c[Remote Terminal] &7No other valid controller is accessible with your permissions."
+    invalid-binding: "&c[Remote Terminal] &7That controller is invalid; right-click it in the manager to remove the binding."
+    selected: "&b[Remote Terminal] &7Current terminal set to &f{controller}"
+    removed: "&b[Remote Terminal] &7Binding removed &8[{count} remaining]"
+
+logs:
+  command:
+    reload-failed: "Configuration reload failed: {error}"
+  butcher:
+    fake-player-failed: "[SlimeEasy] Butcher Machine fake-player construction failed; falling back to normal damage: {error}"
+  auto-clicker:
+    nms-interaction-failed: "[SlimeEasy] Auto Clicker NMS interaction failed; this click was skipped: {error}"
+
+holograms:
+  engineer-goggles:
+    work-state: "&7State: {state}"
+    energy: "&7Energy: &e{charge} &7/ &e{capacity} J"
+    energy-loading: "&8Loading energy data"
+    consumption: "&7Rated consumption: &c{amount} J/t"
+    generation: "&7Current generation: &a{amount} J/t"
+    flow-sampling: "&7Net flow: &8sampling"
+    flow-in: "&7Net input: &a+{amount} J/s"
+    flow-out: "&7Net output: &c-{amount} J/s"
+    flow-idle: "&7Net flow: &f0 J/s"
+
+formats:
+  storage:
+    total: "&7Total: &e{amount}"
+    amount: "&7Amount: &e{amount}"
+    total-aggregated: "&7Total: &e{amount}"
+  survey:
+    fuel-summary: "&7Total &a{total}&7 &8(&a{buckets}&8)&7 buckets &8(&a{rawFuel}&8)&7 raw fuel &8(&a{fuelBlocks}&8)&7 fuel"
+
+research:
+  auto-breaker: "Auto Breaker"
+  auto-placer: "Auto Placer"
+  sieve: "Basic Sieve"
+  reinforced-sieve: "Reinforced Sieve"
+  creeper-ward: "Creeper Ward"
+  butcher: "Butcher Machine"
+  auto-clicker: "Auto Clicker"
+  quarry: "Quarry"
+  survey-ruler: "Ore Surveyor"
+  advanced-survey-ruler: "Advanced Ore Surveyor"
+  engineer-goggles: "Engineer Goggles"
+  growth-inhibitor: "Growth Inhibitor"
+  combat-harness: "Combat Harness"
+  villager-catcher: "Villager Catcher"
+  zombie-signal: "Zombie Signal"
+  villager-trader: "Villager Trader"
+  iron-farm: "Capsule Iron Farm"
+  villager-school: "Villager School"
+  forgetting-potion: "Potion of Forgetting"
+  villager-healer: "Villager Healer"
+  storage-drawer: "Mass Storage Drawer"
+  storage-box: "Paged Storage Box"
+  storage-upgrades: "Storage Upgrade Components"
+  storage-network: "Storage Network"
+  storage-disks: "Item Storage Disks"
+  territory: "Simple Territory"
+
+system:
+  missing: "Missing translation: {key}"
