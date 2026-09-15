@@ -11,9 +11,15 @@ repositories {
     maven("https://jitpack.io/")
 }
 
+// Normal builds remain pinned to the 26.2 production baseline. Compatibility CI
+// may override only the Paper dev bundle so CraftBukkit/NMS and Paper API come
+// from the same candidate build while checking 26.3.
+val paperDevBundleVersion = providers.gradleProperty("paperDevBundleVersion")
+    .orElse(libs.versions.paper.get())
+
 dependencies {
     // dev bundle 同时提供 Paper API、CraftBukkit 与 Mojang 映射 NMS，不能再重复声明 paper-api。
-    paperweight.paperDevBundle(libs.versions.paper.get())
+    paperweight.paperDevBundle(paperDevBundleVersion.get())
     // Slimefun 由服务器提供，仅编译期引入；限定名称避免把服务端 bundler 误放进编译类路径。
     compileOnly(fileTree("libs"))
     // 运行时由服务器可选提供；关闭传递依赖，避免 NBT-API 等实现细节进入本插件类路径。
