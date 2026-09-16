@@ -33,28 +33,26 @@ jobs:
       - name: Build plugin JAR
         run: ./gradlew build --no-daemon --stacktrace
 
-      - name: Prepare raw release JAR
+      - name: Locate raw release JAR
         id: plugin_jar
         shell: bash
         run: |
           set -euo pipefail
           PLUGIN_VERSION="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
-          BUILT_JAR="build/libs/SlimeEasy-${PLUGIN_VERSION}.jar"
           RELEASE_NAME="SF_SlimeEasy${PLUGIN_VERSION}.jar"
           RELEASE_JAR="build/libs/${RELEASE_NAME}"
 
           test -n "${PLUGIN_VERSION}"
-          test -f "${BUILT_JAR}"
-          cp "${BUILT_JAR}" "${RELEASE_JAR}"
+          test -s "${RELEASE_JAR}"
 
           echo "version=${PLUGIN_VERSION}" >> "${GITHUB_OUTPUT}"
           echo "name=${RELEASE_NAME}" >> "${GITHUB_OUTPUT}"
           echo "path=${RELEASE_JAR}" >> "${GITHUB_OUTPUT}"
 
-      - name: Upload raw plugin artifact
+      - name: Upload plugin artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SF_SlimeEasy${{ steps.plugin_jar.outputs.version }}
+          name: ${{ steps.plugin_jar.outputs.name }}
           path: ${{ steps.plugin_jar.outputs.path }}
           if-no-files-found: error
           retention-days: 90
@@ -97,6 +95,6 @@ jobs:
           else
             gh release create "${TAG}" "${{ steps.plugin_jar.outputs.path }}" \
               --title "SlimeEasy Legacy ${VERSION}" \
-              --notes "SlimeEasy Legacy ${VERSION}. Raw installable JAR: \`${{ steps.plugin_jar.outputs.name }}\`." \
+              --notes "SlimeEasy Legacy ${VERSION} adds Paper 26.3 compatibility validation while keeping 26.2 as the production baseline. Raw installable JAR: \`${{ steps.plugin_jar.outputs.name }}\`." \
               --target "${GITHUB_SHA}"
           fi
