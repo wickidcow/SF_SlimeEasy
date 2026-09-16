@@ -39,10 +39,15 @@ kotlin {
 val cleanRunPluginCopies = tasks.register<Delete>("cleanRunPluginCopies") {
     delete(fileTree(layout.projectDirectory.dir("run/plugins")) {
         include("SlimeEasy-*.jar")
+        include("SF_SlimeEasy*.jar")
     })
 }
 
 tasks {
+    jar {
+        archiveFileName.set("SF_SlimeEasy${project.version}.jar")
+    }
+
     runServer {
         dependsOn(cleanRunPluginCopies)
         minecraftVersion(libs.versions.minecraft.get())
