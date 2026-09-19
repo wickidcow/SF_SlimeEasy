@@ -11,6 +11,7 @@ import net.minecraft.server.permissions.LevelBasedPermissionSet
 import net.minecraft.server.permissions.PermissionSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Particle
 import org.bukkit.World
 import org.bukkit.craftbukkit.CraftServer
 import org.bukkit.craftbukkit.CraftWorld
@@ -176,6 +177,47 @@ object FakePlayerFactory {
         override fun isOp(): Boolean = true
 
         override fun setOp(value: Boolean) = Unit
+
+        /**
+         * Paper 26.3 added a vector-speed particle overload to Player.
+         *
+         * CraftPlayer provides the runtime implementation, but Kotlin requires this
+         * subclass to bridge the new abstract API member explicitly when compiling
+         * against the 26.3 dev bundle.
+         */
+        override fun <T : Any> spawnParticle(
+            particle: Particle,
+            x: Double,
+            y: Double,
+            z: Double,
+            count: Int,
+            offsetX: Double,
+            offsetY: Double,
+            offsetZ: Double,
+            speedX: Double,
+            speedY: Double,
+            speedZ: Double,
+            data: T?,
+            force: Boolean,
+            randomizationType: Particle.RandomizationType
+        ) {
+            super.spawnParticle(
+                particle,
+                x,
+                y,
+                z,
+                count,
+                offsetX,
+                offsetY,
+                offsetZ,
+                speedX,
+                speedY,
+                speedZ,
+                data,
+                force,
+                randomizationType
+            )
+        }
     }
 
 }
