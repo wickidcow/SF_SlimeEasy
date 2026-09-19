@@ -47,6 +47,53 @@ jobs:
           test "$PLUGIN_VERSION" = "$VERSION"
           if printf '%s\n' "$PLUGIN_VERSION" | grep -Eiq '(legacy|english|snapshot)'; then exit 1; fi
           echo "path=${RELEASE_JAR}" >> "$GITHUB_OUTPUT"
+      - name: Runtime smoke on Paper 26.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          SMOKE="$RUNNER_TEMP/slimeeasy-paper-26.2"
+          mkdir -p "$SMOKE/plugins"
+          cp "build/libs/$OUTPUT_NAME" "$SMOKE/plugins/$OUTPUT_NAME"
+          curl -fL --retry 3 \
+            -o "$SMOKE/plugins/Slimefun-Legacy4.1.53.jar" \
+            https://github.com/wickidcow/Slimefun-Legacy/releases/download/v4.1.53/Slimefun-Legacy4.1.53.jar
+          PAPER_URL="$(curl -fsSL --retry 3 \
+            -H 'User-Agent: SF_SlimeEasy-CI/1.0.3' \
+            https://fill.papermc.io/v3/projects/paper/versions/26.2/builds \
+            | jq -r 'first(.[] | select(.channel == "STABLE") | .downloads."server:default".url) // empty')"
+          test -n "$PAPER_URL"
+          curl -fL --retry 3 -H 'User-Agent: SF_SlimeEasy-CI/1.0.3' "$PAPER_URL" -o "$SMOKE/paper.jar"
+          printf 'eula=true\n' > "$SMOKE/eula.txt"
+          cat > "$SMOKE/server.properties" <<'EOF'
+          online-mode=false
+          view-distance=2
+          simulation-distance=2
+          spawn-protection=0
+          EOF
+          (
+            cd "$SMOKE"
+            timeout 150s java -Xms512M -Xmx1024M -jar paper.jar --nogui > server.log 2>&1 &
+            echo $! > server.pid
+          )
+          PID="$(cat "$SMOKE/server.pid")"
+          for _ in $(seq 1 120); do
+            if grep -Fq 'Done (' "$SMOKE/server.log"; then break; fi
+            if ! kill -0 "$PID" 2>/dev/null; then
+              cat "$SMOKE/server.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          grep -Fq 'Done (' "$SMOKE/server.log"
+          grep -Fq 'Successfully running SlimeEasy!' "$SMOKE/server.log"
+          if grep -Eq 'InvalidPluginException|NoClassDefFoundError|AbstractMethodError|Error occurred while enabling SlimeEasy' "$SMOKE/server.log"; then
+            cat "$SMOKE/server.log"
+            kill "$PID" 2>/dev/null || true
+            exit 1
+          fi
+          kill "$PID" 2>/dev/null || true
+          wait "$PID" 2>/dev/null || true
+
       - name: Upload canonical plugin artifact
         uses: actions/upload-artifact@v7
         with:
