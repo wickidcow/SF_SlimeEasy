@@ -1,5 +1,6 @@
 package top.maplex.slimeEasy.machine.breaker
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.Container
@@ -66,6 +67,10 @@ object BreakerLogic {
 
     /** 判断目标方块是否允许被破坏。 */
     private fun isBreakable(target: Block): Boolean {
+        // Never bypass Slimefun's block lifecycle. Stateful Slimefun blocks must be
+        // removed through their normal break handlers so storage/addon state stays in sync.
+        if (StorageCacheUtils.hasSlimefunBlock(target.location)) return false
+
         val type = target.type
         if (type.isAir || type == Material.WATER || type == Material.LAVA) return false
         // 硬度小于 0 表示基岩等不可破坏方块
