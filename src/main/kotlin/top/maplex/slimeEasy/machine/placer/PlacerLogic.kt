@@ -1,9 +1,11 @@
 package top.maplex.slimeEasy.machine.placer
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.Container
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 
 /**
  * 放置机的世界操作逻辑: 从机器箱子取方块, 放置到粘性活塞正前方的空位。
@@ -57,13 +59,18 @@ object PlacerLogic {
         val contents = inventory.storageContents
         for (i in contents.indices) {
             val item = contents[i] ?: continue
-            if (isPlaceableBlock(item.type)) return i
+            if (isPlaceableBlock(item)) return i
         }
         return null
     }
 
     /** 判断材质是否为可安全放置的方块 (真实方块、非空气、非容器类)。 */
-    private fun isPlaceableBlock(type: Material): Boolean {
+    private fun isPlaceableBlock(item: ItemStack): Boolean {
+        // Directly setting a block type would bypass Slimefun's BlockPlaceHandler and
+        // create a vanilla-looking block without its required Slimefun/addon state.
+        if (SlimefunItem.getByItem(item) != null) return false
+
+        val type = item.type
         if (!type.isBlock || type.isAir) return false
         // 排除容器类, 避免放出铜箱子等带库存方块引发的复杂状态
         return !isContainerType(type)
