@@ -632,6 +632,9 @@ items:
       &7Maximum: 35 flags per territory.
 
 groups:
+  main:
+    name: "&aSlimeEasy"
+    lore: []
   utility-machines:
     name: "&bUtility Machines"
     lore: |-

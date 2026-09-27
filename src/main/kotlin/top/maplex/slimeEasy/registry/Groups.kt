@@ -1,7 +1,6 @@
 package top.maplex.slimeEasy.registry
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup
 import org.bukkit.Material
@@ -23,7 +22,10 @@ object Groups {
      */
     val MAIN: NestedItemGroup = NestedItemGroup(
         NamespacedKey(SlimeEasy.instance, "slimeeasy"),
-        SlimefunItemStack("SE_GROUP_MAIN", Material.SLIME_BALL, "&aSlimeEasy")
+        SEText.localizedIcon(
+            Material.SLIME_BALL,
+            "groups.main"
+        )
     )
 
     /**
@@ -35,8 +37,7 @@ object Groups {
     val UTILITY_MACHINES: ItemGroup = SubItemGroup(
         NamespacedKey(SlimeEasy.instance, "utility_machines"),
         MAIN,
-        SEText.localized(
-            "SE_GROUP_UTILITY_MACHINES",
+        SEText.localizedIcon(
             Material.PISTON,
             "groups.utility-machines"
         )
@@ -50,8 +51,7 @@ object Groups {
     val UTILITY_TOOLS: ItemGroup = SubItemGroup(
         NamespacedKey(SlimeEasy.instance, "utility_tools"),
         MAIN,
-        SEText.localized(
-            "SE_GROUP_UTILITY_TOOLS",
+        SEText.localizedIcon(
             Material.COPPER_HOE,
             "groups.utility-tools"
         )
@@ -65,8 +65,7 @@ object Groups {
     val STORAGE: ItemGroup = SubItemGroup(
         NamespacedKey(SlimeEasy.instance, "storage"),
         MAIN,
-        SEText.localized(
-            "SE_GROUP_STORAGE",
+        SEText.localizedIcon(
             Material.BARREL,
             "groups.storage"
         )
@@ -80,8 +79,7 @@ object Groups {
     val VILLAGER: ItemGroup = SubItemGroup(
         NamespacedKey(SlimeEasy.instance, "villager"),
         MAIN,
-        SEText.localized(
-            "SE_GROUP_VILLAGER",
+        SEText.localizedIcon(
             Material.VILLAGER_SPAWN_EGG,
             "groups.villager"
         )
@@ -95,8 +93,7 @@ object Groups {
     val TERRITORY: ItemGroup = SubItemGroup(
         NamespacedKey(SlimeEasy.instance, "territory"),
         MAIN,
-        SEText.localized(
-            "SE_GROUP_TERRITORY",
+        SEText.localizedIcon(
             Material.LODESTONE,
             "groups.territory"
         )

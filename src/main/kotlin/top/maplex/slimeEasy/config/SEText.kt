@@ -2,6 +2,7 @@ package top.maplex.slimeEasy.config
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 
 /**
  * Slimefun 物品模板构造器。
@@ -20,6 +21,27 @@ object SEText {
     ): SlimefunItemStack {
         val display = I18n.rawDisplay(key, *placeholders)
         return SlimefunItemStack(id, material, display.name, *display.lore.toTypedArray())
+    }
+
+    /**
+     * Creates a localized guide/category icon without a Slimefun item identity.
+     *
+     * Category icons are presentation-only. Keeping them as plain Bukkit ItemStacks
+     * prevents translation integrations from treating them as registered Slimefun
+     * items and replacing SlimeEasy's configured locale while rendering guide paths.
+     */
+    fun localizedIcon(
+        material: Material,
+        key: String,
+        vararg placeholders: Pair<String, Any?>
+    ): ItemStack {
+        val display = I18n.componentDisplay(key, *placeholders)
+        return ItemStack(material).apply {
+            editMeta { meta ->
+                meta.displayName(display.name)
+                meta.lore(display.lore)
+            }
+        }
     }
 
 }

@@ -34,6 +34,16 @@ jobs:
           test "$OUTPUT_NAME" = "SF_SlimeEasy${VERSION}.jar"
           test "$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')" = "$VERSION"
           grep -Fq 'archiveFileName.set("SF_SlimeEasy${project.version}.jar")' build.gradle.kts
+      - name: Verify guide category localization isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          GROUPS_FILE="src/main/kotlin/top/maplex/slimeEasy/registry/Groups.kt"
+          grep -Fq 'SEText.localizedIcon(' "$GROUPS_FILE"
+          if grep -Fq 'SlimefunItemStack' "$GROUPS_FILE"; then
+            echo "SlimeEasy guide category icons must remain plain ItemStacks so translation hooks cannot override the configured locale." >&2
+            exit 1
+          fi
       - name: Build plugin JAR
         run: ./gradlew build --no-daemon --stacktrace
       - name: Verify canonical raw release JAR

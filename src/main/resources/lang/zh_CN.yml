@@ -611,6 +611,9 @@ items:
       &7手持时显示附近已声明区域边界
       &7最多放置 35 面旗帜
 groups:
+  main:
+    name: "&a简易粘液"
+    lore: []
   utility-machines:
     name: "&b实用机械"
     lore: |-
