@@ -65,6 +65,8 @@ public final class CargoRegression extends JavaPlugin {
     private void verifyKey(ItemStack original) {
         ItemStack snapshot = original.clone();
         ItemStackWrapper wrapped = ItemStackWrapper.wrap(original);
+        var wrapperMeta = wrapped.getItemMeta() == null ? null : wrapped.getItemMeta().clone();
+        int wrapperAmount = wrapped.getAmount();
         // Negative control: the exact operation from 1.0.4 must be rejected.
         boolean rejected = false;
         try {
@@ -98,8 +100,8 @@ public final class CargoRegression extends JavaPlugin {
                 new NamespacedKey(this, "different"), PersistentDataType.INTEGER, 1));
         check(!wrappedKey.equals(ItemKey.Companion.of(ItemStackWrapper.wrap(different))), "distinct custom data");
         check(original.equals(snapshot), "unchanged source stack");
-        check(wrapped.getAmount() == snapshot.getAmount()
-                && Objects.equals(wrapped.getItemMeta(), snapshot.getItemMeta()), "unchanged wrapper");
+        check(wrapped.getAmount() == wrapperAmount
+                && Objects.equals(wrapped.getItemMeta(), wrapperMeta), "unchanged wrapper");
     }
 
     private void verifyPort(ItemStack item) {
