@@ -1,0 +1,54 @@
+name: Stage Reviewed Native Floor Sources
+
+on:
+  push:
+    branches: ['work/native-floor-source-staging-20260930']
+    paths: ['.github/workflows/native-floor-source-staging.yml']
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify reviewed evidence and stage only its source blobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,io,json,subprocess
+          import zipfile
+          from pathlib import Path
+          expected={
+            'build.gradle.kts':'6de4e2fb116ae4d8e6d224b08819f2f05454787e',
+            'gradle/libs.versions.toml':'bf3bbe5f9922f8c615250b4e3e476be5dd654f1d',
+            'src/main/resources/paper-plugin.yml':'f95e332be55dc9f7659868fd5ad314e90a0a7279',
+            'src/cargoRegression/resources/paper-plugin.yml':'5714e1bd05cf7704cdb7d4e41115342fbfa55c79',
+            'src/main/kotlin/top/maplex/slimeEasy/machine/butcher/FakePlayerFactory.kt':'a59b96e4d6937b79c13aeb0c1f5ceaf719a10d22',
+            'src/main/java/top/maplex/slimeEasy/machine/butcher/FakeCraftPlayerBridge.java':'4c55c484cc105b23427f8a77bb66c1ff97fe3d96',
+            'src/cargoRegression/java/top/maplex/slimeEasy/regression/NativeRuntimeRegression.java':'6953c6bc1070f37ae016563e09726701bffe1078',
+            'src/cargoRegression/java/top/maplex/slimeEasy/regression/CargoRegression.java':'200087cb6320c17112e9a5b337e5435fd117af8d',
+          }
+          raw=subprocess.run(['gh','api','repos/wickidcow/Slimefun-Legacy/actions/artifacts/11133396164/zip'],check=True,capture_output=True,timeout=120).stdout
+          assert hashlib.sha256(raw).hexdigest()=='e9a485fef58c8421b7fe4e951b597c7494327a92a3c7016a3462ea68889a22d6'
+          with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            assert json.loads(archive.read('source-manifest.json'))==expected
+            report=json.loads(archive.read('bytecode.json'))
+            assert report['result']=='PASS' and report['class_major_histogram']=={'65':389}
+            for name,digest in expected.items():
+              data=archive.read('tested-source/'+name)
+              assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==digest,name
+              result=subprocess.run(['gh','api','--method','POST','repos/wickidcow/SF_SlimeEasy/git/blobs','--input','-'],input=json.dumps(dict(content=data.decode('utf-8'),encoding='utf-8')),text=True,capture_output=True,check=True,timeout=30)
+              assert json.loads(result.stdout)['sha']==digest
+          Path('reviewed-blobs.json').write_text(json.dumps(expected,indent=2)+'\n')
+          print('Eight source blobs staged. No branch, PR, tag, version or release changed by this job.')
+          PY
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-floor-reviewed-blobs
+          path: reviewed-blobs.json
+          retention-days: 14
+          if-no-files-found: error
