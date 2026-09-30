@@ -1,5 +1,6 @@
 package top.maplex.slimeEasy.storage.core
 
+import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -43,7 +44,15 @@ class ItemKey private constructor(val template: ItemStack) {
          */
         fun of(item: ItemStack?): ItemKey? {
             if (item == null || item.type.isAir) return null
-            val unit = item.clone().apply { amount = 1 }
+            // Cargo supplies an immutable comparison wrapper: clone(), hashCode()
+            // and setters deliberately throw. Copy its exposed metadata into a
+            // regular stack, without retaining or modifying the cached ItemMeta.
+            // Keep ordinary stacks on clone() to preserve their native components.
+            val unit = if (item is ItemStackWrapper) {
+                ItemStack(item.type, 1).apply { itemMeta = item.itemMeta?.clone() }
+            } else {
+                item.clone().apply { amount = 1 }
+            }
             return ItemKey(unit)
         }
     }

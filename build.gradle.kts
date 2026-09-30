@@ -35,6 +35,17 @@ kotlin {
     jvmToolchain(25)
 }
 
+// A test-only plugin exercises real Paper item metadata and Slimefun Cargo
+// callbacks. It is never bundled into the installable SlimeEasy JAR.
+val cargoRegression = sourceSets.create("cargoRegression") {
+    compileClasspath += sourceSets.main.get().compileClasspath + sourceSets.main.get().output
+}
+tasks.register<Jar>("cargoRegressionJar") {
+    from(cargoRegression.output)
+    archiveFileName.set("SlimeEasyCargoRegression.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("regression"))
+}
+
 // run-paper 直接注入 build/libs 中的开发插件，旧的手工副本会造成同名双重类加载器。
 val cleanRunPluginCopies = tasks.register<Delete>("cleanRunPluginCopies") {
     delete(fileTree(layout.projectDirectory.dir("run/plugins")) {
