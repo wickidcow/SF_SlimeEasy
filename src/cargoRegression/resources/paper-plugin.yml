@@ -1,0 +1,14 @@
+name: SlimeEasyCargoRegression
+version: '1.0'
+main: top.maplex.slimeEasy.regression.CargoRegression
+api-version: '26.2'
+dependencies:
+  server:
+    Slimefun:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    SlimeEasy:
+      load: BEFORE
+      required: true
+      join-classpath: true
