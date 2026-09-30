@@ -11,7 +11,6 @@ import net.minecraft.server.permissions.LevelBasedPermissionSet
 import net.minecraft.server.permissions.PermissionSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.Particle
 import org.bukkit.World
 import org.bukkit.craftbukkit.CraftServer
 import org.bukkit.craftbukkit.CraftWorld
@@ -30,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
  * 同时避免生成网络连接和真实玩家存档。构造失败只记录一次并永久降级，调用方可继续使用普通伤害路径。
  *
  * 假玩家需要同时通过 Bukkit 与 NMS 两套权限判断，但公开 OP 名单 API 会立即写入 `ops.json`。
- * 因此使用专用 [FakeCraftPlayer] 固定 Bukkit OP 视图，并由 [FakeServerPlayer.permissions] 提供 NMS
+ * 因此使用专用 [FakeCraftPlayerBridge] 固定 Bukkit OP 视图，并由 [FakeServerPlayer.permissions] 提供 NMS
  * 所有者权限；两者都不修改服务器 OP 名单。屠夫伤害的领地与外部保护权限会在事件层还原为
  * 真实机器主人单独校验，不能让所有玩家借用这个内部 OP 身份绕过保护。
  * 所有入口只允许在服务端主线程调用。
@@ -96,7 +95,7 @@ object FakePlayerFactory {
      *
      * Essentials 对任何未加入在线列表且无既有数据的 Player 都会记录该消息，即使对象是标准
      * CraftPlayer；因此不能靠替换包装规避。这里在主线程同步调用其公共 `getUser(Player)`，让缓存
-     * 直接持有具备 OP 语义的 [FakeCraftPlayer]，并用原日志过滤器串联一个仅匹配本 UUID 的过滤条件。
+     * 直接持有具备 OP 语义的 [FakeCraftPlayerBridge]，并用原日志过滤器串联一个仅匹配本 UUID 的过滤条件。
      * 反射保持 Essentials 为可选依赖，接口变化时安静跳过，不影响假玩家核心功能。
      */
     private fun initializeEssentialsUser(player: Player) {
@@ -159,65 +158,13 @@ object FakePlayerFactory {
         clientInformation: ClientInformation,
         craftServer: CraftServer
     ) : ServerPlayer(server, level, profile, clientInformation) {
-        private val fakeBukkitEntity = FakeCraftPlayer(craftServer, this)
+        private val fakeBukkitEntity = FakeCraftPlayerBridge(craftServer, this)
 
         override fun getBukkitEntity(): CraftPlayer = fakeBukkitEntity
 
         override fun getBukkitEntityRaw(): CraftPlayer = fakeBukkitEntity
 
         override fun permissions(): PermissionSet = LevelBasedPermissionSet.OWNER
-    }
-
-    /**
-     * 只对这个内存假玩家报告 OP；[setOp] 故意不操作，防止任何插件把它写入 `ops.json`。
-     * 自动点击器的 Bukkit 事件、原版 NMS 交互与外部保护插件依赖完整 OP 语义，不能用一组
-     * Slimefun 物品权限节点替代；机器伤害的领地校验仍会在事件层还原为真实放置者。
-     */
-    private class FakeCraftPlayer(server: CraftServer, handle: ServerPlayer) : CraftPlayer(server, handle) {
-        override fun isOp(): Boolean = true
-
-        override fun setOp(value: Boolean) = Unit
-
-        /**
-         * Paper 26.3 added a vector-speed particle overload to Player.
-         *
-         * CraftPlayer provides the runtime implementation, but Kotlin requires this
-         * subclass to bridge the new abstract API member explicitly when compiling
-         * against the 26.3 dev bundle.
-         */
-        override fun <T : Any> spawnParticle(
-            particle: Particle,
-            x: Double,
-            y: Double,
-            z: Double,
-            count: Int,
-            offsetX: Double,
-            offsetY: Double,
-            offsetZ: Double,
-            speedX: Double,
-            speedY: Double,
-            speedZ: Double,
-            data: T?,
-            force: Boolean,
-            randomizationType: Particle.RandomizationType
-        ) {
-            super.spawnParticle(
-                particle,
-                x,
-                y,
-                z,
-                count,
-                offsetX,
-                offsetY,
-                offsetZ,
-                speedX,
-                speedY,
-                speedZ,
-                data,
-                force,
-                randomizationType
-            )
-        }
     }
 
 }

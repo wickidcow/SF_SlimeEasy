@@ -53,11 +53,13 @@ public final class CargoRegression extends JavaPlugin {
                 stackable.editMeta(stackMeta -> stackMeta.setMaxStackSize(16));
                 verifyKey(stackable);
                 verifyPort(custom);
+                NativeRuntimeRegression.verify(this);
                 getLogger().info("CARGO_WRAPPER_REGRESSION_PASS");
             } catch (Throwable failure) {
                 getLogger().log(Level.SEVERE, "CARGO_WRAPPER_REGRESSION_FAIL", failure);
             } finally {
-                Bukkit.shutdown();
+                // Allow the real async profile callback to enqueue its research writes before shutdown.
+                Bukkit.getScheduler().runTaskLater(this, Bukkit::shutdown, 40L);
             }
         }, 40L);
     }

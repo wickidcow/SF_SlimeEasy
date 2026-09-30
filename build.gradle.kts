@@ -11,9 +11,9 @@ repositories {
     maven("https://jitpack.io/")
 }
 
-// Normal builds remain pinned to the 26.2 production baseline. Compatibility CI
-// may override only the Paper dev bundle so CraftBukkit/NMS and Paper API come
-// from the same candidate build while checking 26.3.
+// Production is compiled against the oldest supported native/API surface.
+// Compatibility builds may override only the dev bundle; the shipped bytecode
+// stays Java 21 and newer runtime checks use this same baseline-built JAR.
 val paperDevBundleVersion = providers.gradleProperty("paperDevBundleVersion")
     .orElse(libs.versions.paper.get())
 
@@ -23,7 +23,9 @@ dependencies {
     // Slimefun 由服务器提供，仅编译期引入；限定名称避免把服务端 bundler 误放进编译类路径。
     compileOnly(fileTree("libs"))
     // 运行时由服务器可选提供；关闭传递依赖，避免 NBT-API 等实现细节进入本插件类路径。
-    compileOnly("com.github.decentsoftware-eu:decentholograms:2.10.1")
+    compileOnly("com.github.decentsoftware-eu.decentholograms:plugin:2.10.1") {
+        isTransitive = false
+    }
     // 普通 Jar 不会内嵌 implementation 依赖；服务器运行时由 SlimeEasyLoader 下载同版本 stdlib。
     implementation(libs.kotlin.stdlib)
 }
@@ -33,6 +35,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 
 kotlin {
     jvmToolchain(25)
+    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
 }
 
 // A test-only plugin exercises real Paper item metadata and Slimefun Cargo
@@ -71,4 +74,9 @@ tasks {
             expand(props)
         }
     }
+}
+
+// A Java 25 compiler must still emit classes loadable by the Java 21 floor.
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(21)
 }
