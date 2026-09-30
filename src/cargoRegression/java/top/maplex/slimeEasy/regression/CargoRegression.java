@@ -43,13 +43,15 @@ public final class CargoRegression extends JavaPlugin {
                 meta.displayName(Component.text("Cargo metadata regression"));
                 meta.lore(List.of(Component.text("Persistent item identity")));
                 meta.addEnchant(Enchantment.UNBREAKING, 3, true);
-                meta.setMaxStackSize(16);
                 ((Damageable) meta).setDamage(37);
                 meta.getPersistentDataContainer().set(
                         new NamespacedKey(this, "payload"), PersistentDataType.STRING, "disk-and-filter-data");
                 custom.setItemMeta(meta);
-                custom.setAmount(7);
                 verifyKey(custom);
+
+                ItemStack stackable = new ItemStack(Material.PAPER, 7);
+                stackable.editMeta(stackMeta -> stackMeta.setMaxStackSize(16));
+                verifyKey(stackable);
                 verifyPort(custom);
                 getLogger().info("CARGO_WRAPPER_REGRESSION_PASS");
             } catch (Throwable failure) {
