@@ -1,8 +1,8 @@
 [versions]
 kotlin = "2.4.20-Beta1"
 
-paper = "26.3-rc-3.build.1-alpha"
-minecraft = "26.2"
+paper = "1.21.11-R0.1-SNAPSHOT"
+minecraft = "1.21.11"
 
 run-task = "3.0.2"
 
