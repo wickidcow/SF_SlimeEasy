@@ -2,10 +2,27 @@ name: Build SlimeEasy
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
+    inputs:
+      publish_new_release:
+        description: 'Publish a distinct version only after all cargo tests and exact-source checks pass'
+        required: true
+        type: boolean
+        default: false
+      confirm_version:
+        description: 'Confirm the exact reviewed new version'
+        required: false
+        type: string
+        default: ''
+      expected_source_sha:
+        description: 'Reviewed 40-character source SHA, matching current main'
+        required: false
+        type: string
+        default: ''
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   VERSION: "1.0.5"
@@ -26,6 +43,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
+      - name: Verify immutable release contract and no-clobber regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n scripts/publish_new_release.sh
+          python3 -m unittest discover -s scripts -p 'test_publish_new_release.py' -v
       - name: Verify canonical release identity
         shell: bash
         run: |
@@ -62,6 +85,29 @@ jobs:
       - name: Cargo wrapper regression on Paper 26.3
         run: bash scripts/smoke-cargo-regression.sh 26.3
 
+      - name: Verify universal Java 21 plugin bytecode and packaged identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          JAR="build/libs/$OUTPUT_NAME"
+          unzip -tqq "$JAR"
+          python3 - <<'PY'
+          import struct, zipfile
+          path = 'build/libs/SF_SlimeEasy1.0.5.jar'
+          with zipfile.ZipFile(path) as zipfile_obj:
+              names = [n for n in zipfile_obj.namelist() if n.endswith('.class')]
+              if not names:
+                  raise SystemExit('No JVM classes in SlimeEasy release JAR')
+              majors = set()
+              for name in names:
+                  data = zipfile_obj.read(name)[:8]
+                  if data[:4] != bytes.fromhex('cafebabe'):
+                      raise SystemExit('Invalid JVM class header: ' + name)
+                  majors.add(struct.unpack('>H', data[6:8])[0])
+              if 65 not in majors or any(major > 65 for major in majors):
+                  raise SystemExit('SlimeEasy distributable must preserve Java 21 bytecode')
+          print('Java 21 raw JAR bytecode verified')
+          PY
       - name: Upload canonical plugin artifact
         uses: actions/upload-artifact@v7
         with:
@@ -70,31 +116,55 @@ jobs:
           archive: false
           if-no-files-found: error
           retention-days: 90
-      - name: Publish rolling latest release
-        if: github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          SHA_SHORT="${GITHUB_SHA::7}"
-          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
-          gh release create latest "${{ steps.plugin_jar.outputs.path }}" --title "SlimeEasy ${VERSION} (latest)" --notes "Automatically built from commit \`${SHA_SHORT}\`. Raw installable JAR: \`${OUTPUT_NAME}\`." --prerelease --target "${GITHUB_SHA}"
-      - name: Publish stable version release
-        if: github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ github.token }}
+
+
+  publish:
+    name: Publish a distinct SlimeEasy version after manual opt-in
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.publish_new_release == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out exactly reviewed source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Download same-run raw canonical JAR
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.OUTPUT_NAME }}
+          path: dist
+          skip-decompress: true
+      - name: Validate reviewed exact source, immutable tag and canonical JAR
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_CONFIRMED: ${{ inputs.publish_new_release }}
+          CONFIRM_VERSION: ${{ inputs.confirm_version }}
+          EXPECTED_SOURCE_SHA: ${{ inputs.expected_source_sha }}
+          JAR: dist/SF_SlimeEasy1.0.5.jar
+        run: bash scripts/publish_new_release.sh
+      - name: Verify published SHA, asset checksum and byte-identical redownload
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG="v${VERSION}"
-          NOTES_FILE="release-notes/${VERSION}.md"
-          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            while IFS= read -r OLD; do
-              if [[ "$OLD" == *.jar && "$OLD" != "$OUTPUT_NAME" ]]; then gh release delete-asset "$TAG" "$OLD" --repo "$GITHUB_REPOSITORY" -y; fi
-            done < <(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')
-            gh release upload "$TAG" "${{ steps.plugin_jar.outputs.path }}" --repo "$GITHUB_REPOSITORY" --clobber
-          elif [[ -f "$NOTES_FILE" ]]; then
-            gh release create "$TAG" "${{ steps.plugin_jar.outputs.path }}" --repo "$GITHUB_REPOSITORY" --title "SlimeEasy ${VERSION}" --notes-file "$NOTES_FILE" --target "$GITHUB_SHA"
-          else
-            gh release create "$TAG" "${{ steps.plugin_jar.outputs.path }}" --repo "$GITHUB_REPOSITORY" --title "SlimeEasy ${VERSION}" --notes "SlimeEasy ${VERSION}. Raw installable JAR: \`${OUTPUT_NAME}\`." --target "$GITHUB_SHA"
-          fi
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$VERSION" > "$RUNNER_TEMP/slimeeasy-release.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os
+          release = json.loads((Path(os.environ['RUNNER_TEMP'])/'slimeeasy-release.json').read_text(encoding='utf-8'))
+          jar = Path('dist')/os.environ['OUTPUT_NAME']
+          assert release['tag_name'] == 'v'+os.environ['VERSION']
+          assert release['target_commitish'] == os.environ['GITHUB_SHA']
+          assert len(release['assets']) == 1
+          asset = release['assets'][0]
+          assert asset['name'] == jar.name and asset['size'] == jar.stat().st_size
+          assert asset['state'] == 'uploaded'
+          assert asset['digest'] == 'sha256:'+hashlib.sha256(jar.read_bytes()).hexdigest()
+          PY
+          mkdir -p verified
+          gh release download "v$VERSION" --repo "$GITHUB_REPOSITORY" --pattern "$OUTPUT_NAME" --dir verified
+          cmp "dist/$OUTPUT_NAME" "verified/$OUTPUT_NAME"
