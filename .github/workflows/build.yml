@@ -101,7 +101,7 @@ jobs:
               majors = set()
               for name in names:
                   data = zipfile_obj.read(name)[:8]
-                  if data[:4] != b'\\xca\\xfe\\xba\\xbe':
+                  if data[:4] != bytes.fromhex('cafebabe'):
                       raise SystemExit('Invalid JVM class header: ' + name)
                   majors.add(struct.unpack('>H', data[6:8])[0])
               if 65 not in majors or any(major > 65 for major in majors):
