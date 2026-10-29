@@ -20,7 +20,7 @@ class ImmutableSlimeEasyReleaseTest(unittest.TestCase):
         self.jar = dist / "SF_SlimeEasy1.0.5.jar"
         with ZipFile(self.jar, "w") as out:
             out.writestr("paper-plugin.yml", "name: SlimeEasy\nversion: '1.0.5'\napi-version: '1.21.11'\n")
-        notes = root / "docs" / "releases"
+        notes = root / "release-notes"
         notes.mkdir(parents=True)
         (notes / "1.0.5.md").write_text("Test release notes.\n", encoding="utf-8")
         gh = root / "gh"
